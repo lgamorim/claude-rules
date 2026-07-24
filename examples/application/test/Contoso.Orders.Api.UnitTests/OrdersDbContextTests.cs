@@ -3,7 +3,7 @@ using Contoso.Orders.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Contoso.Orders.Api.Tests;
+namespace Contoso.Orders.Api.UnitTests;
 
 public class OrdersDbContextTests
 {

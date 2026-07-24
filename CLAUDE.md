@@ -4,30 +4,76 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-This is **not an application codebase** — it is a shared, opinionated set of Claude Code project rules for .NET/C# development. The rules live under `.claude/rules/` and are meant to be applied when Claude Code writes or reviews C# code, either directly in this repo or by being referenced/copied into other .NET repositories.
+This is **not an application codebase** — it is a shared, opinionated set of
+Claude Code project rules for .NET/C# development. The rules live under
+`.claude/rules/` and are meant to be applied when Claude Code writes or reviews
+C# code, either directly in this repo or by being referenced/copied into other
+.NET repositories.
 
-A small reference/demo project showing these rules applied to real code lives under `examples/sample-project/` (see "Sample project" below). This repository itself ships only rule files — there are no build, lint, or test commands for the repository's own content.
+A reference project showing these rules applied to real code lives under
+`examples/application/` (see "Example" below). This repository itself ships only
+rule files and a sync script — there are no build, lint, or test commands for the
+repository's own content.
 
-## The rules (`.claude/rules/`)
+## Structure
 
-These five files are the actual content of this repository and take precedence over any default behavior:
+The rules are **composable modules**, not one monolithic set, because projects of
+different scope need different subsets — even within the same tech stack:
 
-- **`coding-standards.md`** — Microsoft C# conventions and .NET naming guidelines: PascalCase/camelCase/`_camelCase` conventions, `I`-prefixed interfaces, `Async`-suffixed async methods, one top-level type per file, file-scoped namespaces, nullable reference types enabled with no unjustified `!` suppression, XML docs on public APIs, zero-warning builds (`TreatWarningsAsErrors`).
-- **`architecture.md`** — physical project/solution structure: source under `src/<ProjectName>/`, tests under `test/<ProjectName>.Tests/`, one solution file per repo or example at its root, and shared MSBuild properties centralized in a `Directory.Build.props`.
-- **`design-principles.md`** — OOP/SOLID guidance: composition over inheritance, small cohesive classes, dependencies pointing inward (Application/Domain define interfaces, Infrastructure implements them), and an explicit YAGNI constraint — no speculative abstractions, no single-implementation interfaces unless required for testing/layer isolation.
-- **`testing.md`** — mandatory TDD workflow (red/green/refactor): no production code without a failing test first, `Should_ExpectedOutcome_When_Scenario` naming, Arrange-Act-Assert structure, deterministic unit tests (no real I/O/clock — abstract time via `TimeProvider`), `dotnet test` run after every change.
-- **`workflow.md`** — minimal, focused changes (one logical change per commit) with imperative *why*-focused messages; present both options with trade-offs when unsure between two designs; no direct commits to the default branch — changes land via squash-merged PRs from `feature/` branches (enforced with branch protection on multi-contributor repos), with a solo-project exception that waives the PR when there is no second reviewer while keeping the feature-branch and squash steps; keep the file updated as new conventions are established.
+- **`core/`** (5 files) — archetype-invariant; every profile imports all of them.
+  `coding-standards.md`, `design-principles.md`, `architecture.md`,
+  `testing-philosophy.md`, `workflow-core.md`.
+- **`archetype/`** — pick exactly one per project: `library.md`,
+  `application.md`, `game-unity.md`.
+- **`overlays/`** — orthogonal toggles: `workflow-solo.md` / `workflow-team.md`
+  (mutually exclusive; every project needs one), `persistence-efcore.md`,
+  `benchmarks.md`.
+- **`profiles/`** — thin manifests that `@import` a tailored subset. A consuming
+  repo imports **one profile** and gets everything it needs.
+- **`templates/`** — `path-scoped-rule.md`, the skeleton for project-specific
+  rules that use YAML `paths:` frontmatter.
 
-When modifying these rule files, keep them consistent with each other (e.g., a change to naming conventions in `coding-standards.md` should not contradict examples elsewhere) and update `workflow.md` itself whenever a new convention or correction is established, per its own instruction.
+`tools/sync.ps1` copies a profile and its modules into a target repo, or audits
+one for drift with `-Check`.
 
-## Sample project
+## Rules for working on this repository
 
-`examples/sample-project/` contains a small ASP.NET Core minimal API + EF
-Core (Npgsql) sample ("Contoso.Orders") that demonstrates the five rules
-above applied to a real, if tiny, codebase. Its own `CLAUDE.md` imports the
-same five rule files via `@../../.claude/rules/...` and adds a handful of
-project-specific notes; see `examples/sample-project/README.md` for a guided
-tour of which file demonstrates which rule.
+- **Portable files name no external project.** Everything under `core/`,
+  `archetype/`, `overlays/`, `profiles/`, and `templates/` gets copied or
+  imported into other repositories, so it must be project-neutral: describe
+  *kinds* of projects (library, application, Unity package) and generic tooling
+  (BenchmarkDotNet, EF Core, Testcontainers), never a specific repo name. The
+  concrete repo→profile mapping belongs only in `README.md`, which never leaves
+  this repo.
+- **Graduate by file, not by conditional.** Claude treats all imported prose as
+  active, so it cannot skip an "if solo…" paragraph in a team project. Anything
+  that toggles per project must be its own small module selected by a profile —
+  that is why `workflow-solo`/`workflow-team` are separate files. Only split a
+  module when a real profile needs the halves apart.
+- **Don't add speculative profiles.** Profiles map to durable archetypes, not to
+  lifecycle phases or every archetype×posture combination. There is deliberately
+  no `scaffold`, `library-solo`, or `application-team` profile; posture is one
+  orthogonal line a consumer can swap. This is the same YAGNI constraint
+  `design-principles.md` imposes on production code.
+- **Keep the modules mutually consistent.** A change to naming conventions in
+  `core/coding-standards.md` must not contradict examples elsewhere. Every
+  module must either be imported by at least one profile or be documented in
+  `profiles/README.md` as an opt-in overlay a consumer adds directly (as
+  `persistence-efcore.md` is) — otherwise it is dead weight.
+- **Update `core/workflow-core.md`** (or the relevant workflow overlay) whenever
+  a new convention or correction is established, per its own instruction.
+- When changing a rule that consuming repos already copied, expect drift: run
+  `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
-There is no `src/` or `test/` at the repo root — this repository ships rules
-only; example/reference code lives under `examples/`.
+## Example
+
+`examples/application/` contains a small ASP.NET Core minimal API + EF Core
+(Npgsql) sample ("Contoso.Orders") demonstrating the `application-solo` profile
+plus the `persistence-efcore` overlay. Its own `CLAUDE.md` imports the profile
+via `@../../.claude/rules/profiles/application-solo.md` and adds
+project-specific notes; see `examples/application/README.md` for a guided tour of
+which file demonstrates which rule.
+
+Build and test it with `dotnet build` / `dotnet test` from that directory. There
+is no `src/` or `test/` at the repo root — this repository ships rules only;
+example/reference code lives under `examples/`.
