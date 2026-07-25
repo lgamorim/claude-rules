@@ -11,6 +11,10 @@ imports a single profile and gets the tailored subset.
 
 Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core.
 
+Add `overlays/workflow-agent-review.md` to a **team**-posture project that runs a
+separate implement agent and review agent over its PRs. It is policy only — the
+agent/CI wiring lives in the consuming repo's automation, not here.
+
 New repo with no code yet? Don't reach for a profile — import the core files
 directly until the archetype is clear, then adopt its profile. A fresh repo is a
 transient state, not a durable archetype, so it gets no profile of its own.
