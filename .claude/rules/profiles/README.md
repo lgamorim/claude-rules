@@ -44,6 +44,11 @@ one line yourself in your repo's `CLAUDE.md`. For example, a solo library:
 Switch postures later by swapping that single `workflow-solo.md` ⇄
 `workflow-team.md` line — nothing else changes.
 
+`tools/sync.ps1 -Workflow solo|team` copies exactly that set for you, and prints
+the `@import` lines to paste. Because the result no longer matches any profile,
+it ships the modules **without** a profile manifest — so import the modules
+directly, not a profile.
+
 ## Adopting a profile
 
 Option A — submodule (single source of truth, zero drift):
@@ -55,6 +60,10 @@ Option B — copy (self-contained): run `tools/sync.ps1 -Target <repo> -Profile
 application-solo` to copy the profile and every module it imports into the
 target's `.claude/rules/`, then import the profile from your `CLAUDE.md`.
 Re-run with `-Check` to report drift.
+
+Recompose while copying with `-Workflow solo|team` (swap the posture) and
+`-Add <overlay>` (append an opt-in overlay, e.g. `persistence-efcore`). Pass the
+same flags to `-Check` later, or the audit compares against the wrong set.
 
 ## Path-scoped domain rules
 

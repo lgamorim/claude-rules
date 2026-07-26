@@ -84,6 +84,15 @@ Re-run with `-Check` to audit a repo for drift instead of overwriting it:
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Check
 ```
 
+Need a different posture or an extra overlay? Recompose while copying — `-Workflow
+solo|team` swaps the posture, `-Add <overlay>` appends an opt-in one. A recomposed
+set matches no profile, so the modules are copied without a profile manifest and
+the `@import` lines to paste are printed for you:
+
+```powershell
+./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Workflow team
+```
+
 Either way, also copy
 [`examples/application/.editorconfig`](examples/application/.editorconfig) to
 your solution root and set
