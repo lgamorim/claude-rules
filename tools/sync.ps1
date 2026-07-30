@@ -39,6 +39,15 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Read a text file for comparison with line endings normalized to LF. Consuming
+# repos may check out with `eol=lf` (.gitattributes) while this worktree is
+# CRLF, so a byte-level compare (Get-FileHash) reports DRIFT for identical
+# text. -Encoding utf8 is explicit because Windows PowerShell 5.1 misreads a
+# BOM-less UTF-8 file as ANSI.
+function Get-NormalizedContent([string] $Path) {
+    (Get-Content $Path -Raw -Encoding utf8) -replace "`r`n", "`n"
+}
+
 $rulesRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\.claude\rules')).Path
 $profilePath = Join-Path $rulesRoot "profiles\$Profile.md"
 
@@ -104,7 +113,7 @@ foreach ($src in $sources) {
             Write-Output "MISSING  $relative"
             $drift++
         }
-        elseif ((Get-FileHash $src).Hash -ne (Get-FileHash $dst).Hash) {
+        elseif ((Get-NormalizedContent $src) -ne (Get-NormalizedContent $dst)) {
             Write-Output "DRIFT    $relative"
             $drift++
         }
