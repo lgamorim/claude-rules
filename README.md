@@ -19,9 +19,9 @@ the modules for a project archetype, so adopting the rules is a one-line import.
 .claude/rules/
   core/         archetype-invariant — every profile imports all five
   archetype/    pick exactly one: library, application, game-unity
-  overlays/     orthogonal toggles: workflow posture, EF Core, benchmarks
+  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, benchmarks
   profiles/     thin manifests composing the above (start here)
-  templates/    skeleton for project-specific, path-scoped rules
+  templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
 tools/sync.ps1  copy a profile into a repo, or audit it for drift
 ```
@@ -55,6 +55,7 @@ one orthogonal line. See
 | [`archetype/application.md`](.claude/rules/archetype/application.md) | Single deployables: `.UnitTests`, no packing, config from `appsettings`/environment, relaxed docs at the app boundary. |
 | [`archetype/game-unity.md`](.claude/rules/archetype/game-unity.md) | Unity 6 packages: UPM layout, engine-agnostic core, a managed oracle for any Burst backend, headless editor tests. |
 | [`overlays/workflow-solo.md`](.claude/rules/overlays/workflow-solo.md) / [`workflow-team.md`](.claude/rules/overlays/workflow-team.md) | The PR posture: solo waives the PR (keeping feature branch + squash); team requires a reviewed PR with branch protection. |
+| [`overlays/workflow-agent-review-solo.md`](.claude/rules/overlays/workflow-agent-review-solo.md) / [`workflow-agent-review-team.md`](.claude/rules/overlays/workflow-agent-review-team.md) | An implement/review contract between two agents that never share a context: solo has the reviewer read the `feature/` branch diff before the squash-merge, team has it read the PR. Policy only — wire the reviewer from [`templates/reviewer-subagent.md`](.claude/rules/templates/reviewer-subagent.md). |
 | [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md) | The ORM exception to "prefer records", mapping in `OnModelCreating`, migrations, real-engine integration tests. |
 | [`overlays/benchmarks.md`](.claude/rules/overlays/benchmarks.md) | BenchmarkDotNet under `bench/`, built by CI but never run there, baselines produced locally. |
 

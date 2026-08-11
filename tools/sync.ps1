@@ -83,7 +83,7 @@ if ($Workflow) {
     }
 }
 
-# Append opt-in overlays (e.g. persistence-efcore, workflow-agent-review).
+# Append opt-in overlays (e.g. persistence-efcore, workflow-agent-review-solo).
 foreach ($name in $Add) {
     $overlayPath = Join-Path $rulesRoot "overlays\$name.md"
     if (-not (Test-Path $overlayPath)) {
@@ -95,6 +95,18 @@ foreach ($name in $Add) {
     if ($modules -notcontains $overlay) {
         $modules += $overlay
         $composed = $true
+    }
+}
+
+# An agent-review overlay is posture-matched: pairing it with the opposite
+# workflow overlay would copy a set the rules themselves forbid.
+$posture = @($modules | Where-Object {
+    $_ -like '*overlays\workflow-solo.md' -or $_ -like '*overlays\workflow-team.md'
+})
+foreach ($variant in 'solo', 'team') {
+    $review = @($modules | Where-Object { $_ -like "*overlays\workflow-agent-review-$variant.md" })
+    if ($review.Count -gt 0 -and ($posture.Count -eq 0 -or $posture[0] -notlike "*workflow-$variant.md")) {
+        throw "Overlay 'workflow-agent-review-$variant' requires the '$variant' workflow posture; use -Workflow $variant or the matching agent-review variant."
     }
 }
 

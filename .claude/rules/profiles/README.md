@@ -11,9 +11,15 @@ imports a single profile and gets the tailored subset.
 
 Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core.
 
-Add `overlays/workflow-agent-review.md` to a **team**-posture project that runs a
-separate implement agent and review agent over its PRs. It is policy only — the
-agent/CI wiring lives in the consuming repo's automation, not here.
+Add an agent-review overlay to a project that runs a separate implement agent
+and review agent over each change — pick the variant matching the workflow
+posture: `overlays/workflow-agent-review-team.md` has the reviewer read the PR
+(**team** posture), `overlays/workflow-agent-review-solo.md` has it read the
+`feature/` branch diff before the squash-merge (**solo** posture, no PR). Both
+are policy only — the agent/CI wiring lives in the consuming repo's
+automation, not here; `templates/reviewer-subagent.md` is a skeleton for that
+wiring (copy it to the consuming repo's `.claude/agents/` and pin the reviewer
+model there).
 
 New repo with no code yet? Don't reach for a profile — import the core files
 directly until the archetype is clear, then adopt its profile. A fresh repo is a
@@ -42,7 +48,8 @@ one line yourself in your repo's `CLAUDE.md`. For example, a solo library:
     @.../overlays/benchmarks.md
 
 Switch postures later by swapping that single `workflow-solo.md` ⇄
-`workflow-team.md` line — nothing else changes.
+`workflow-team.md` line — plus the matching agent-review overlay variant, if
+the set includes one; nothing else changes.
 
 `tools/sync.ps1 -Workflow solo|team` copies exactly that set for you, and prints
 the `@import` lines to paste. Because the result no longer matches any profile,

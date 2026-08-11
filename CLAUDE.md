@@ -26,12 +26,16 @@ different scope need different subsets — even within the same tech stack:
 - **`archetype/`** — pick exactly one per project: `library.md`,
   `application.md`, `game-unity.md`.
 - **`overlays/`** — orthogonal toggles: `workflow-solo.md` / `workflow-team.md`
-  (mutually exclusive; every project needs one), `persistence-efcore.md`,
+  (mutually exclusive; every project needs one),
+  `workflow-agent-review-solo.md` / `workflow-agent-review-team.md` (mutually
+  exclusive opt-ins matched to the workflow posture), `persistence-efcore.md`,
   `benchmarks.md`.
 - **`profiles/`** — thin manifests that `@import` a tailored subset. A consuming
   repo imports **one profile** and gets everything it needs.
-- **`templates/`** — `path-scoped-rule.md`, the skeleton for project-specific
-  rules that use YAML `paths:` frontmatter.
+- **`templates/`** — skeletons a consuming repo copies and fills in:
+  `path-scoped-rule.md` for project-specific rules with YAML `paths:`
+  frontmatter, `reviewer-subagent.md` for the reviewer agent behind the
+  agent-review overlays.
 
 `tools/sync.ps1` copies a profile and its modules into a target repo, or audits
 one for drift with `-Check`.
@@ -62,6 +66,15 @@ one for drift with `-Check`.
   `persistence-efcore.md` is) — otherwise it is dead weight.
 - **Update `core/workflow-core.md`** (or the relevant workflow overlay) whenever
   a new convention or correction is established, per its own instruction.
+- **This repo runs `overlays/workflow-agent-review-solo.md` on itself.** Rule
+  prose is this repo's production code, so changes get the same two-role flow:
+  implement on a `feature/` branch and end with a handoff summary (intent,
+  checks done, deliberate deviations); an independent reviewer — a fresh
+  context with none of the implementer's state beyond the handoff summary —
+  reviews the branch diff against `master` before the merge. The maintainer
+  adjudicates the findings, accepted ones land as new commits on the branch
+  from an implementer context, and the squash-merge happens only on the
+  maintainer's explicit approval.
 - When changing a rule that consuming repos already copied, expect drift: run
   `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
