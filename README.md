@@ -19,7 +19,7 @@ the modules for a project archetype, so adopting the rules is a one-line import.
 .claude/rules/
   core/         archetype-invariant — every profile imports all five
   archetype/    pick exactly one: library, application, game-unity
-  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, benchmarks
+  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, benchmarks, frontends
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
@@ -35,7 +35,11 @@ tools/sync.ps1  copy a profile into a repo, or audit it for drift
 | [`game-unity`](.claude/rules/profiles/game-unity.md) | all 5 | library + game-unity | team | benchmarks |
 
 Add [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md)
-to any project that uses EF Core.
+to any project that uses EF Core,
+[`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) to one
+serving server-rendered Razor UI (MVC and/or Razor Pages), and
+[`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) to
+one rendering UI with Blazor.
 
 The workflow posture in each profile is a **default, not a fixed pairing** —
 there is deliberately no `library-solo` or `application-team`, because posture is
@@ -58,6 +62,8 @@ one orthogonal line. See
 | [`overlays/workflow-agent-review-solo.md`](.claude/rules/overlays/workflow-agent-review-solo.md) / [`workflow-agent-review-team.md`](.claude/rules/overlays/workflow-agent-review-team.md) | An implement/review contract between two agents that never share a context: solo has the reviewer read the `feature/` branch diff before the squash-merge, team has it read the PR. Policy only — wire the reviewer from [`templates/reviewer-subagent.md`](.claude/rules/templates/reviewer-subagent.md). |
 | [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md) | The ORM exception to "prefer records", mapping in `OnModelCreating`, migrations, real-engine integration tests. |
 | [`overlays/benchmarks.md`](.claude/rules/overlays/benchmarks.md) | BenchmarkDotNet under `bench/`, built by CI but never run there, baselines produced locally. |
+| [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) | Server-rendered Razor UI: Razor Pages by default, thin controllers/handlers, view models never domain entities, tag helpers, Post/Redirect/Get, global antiforgery, markup tested at the boundary via `WebApplicationFactory`. |
+| [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) | Blazor Web App across all render modes: static SSR by default, per-mode DI-lifetime and state rules, prerender double-execution, JS interop timing, disposal, bUnit-first testing. |
 
 ## Using the rules in your repo
 

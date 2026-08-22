@@ -11,6 +11,11 @@ imports a single profile and gets the tailored subset.
 
 Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core.
 
+Add `overlays/frontend-mvc.md` when the app serves server-rendered Razor UI
+(MVC and/or Razor Pages), or `overlays/frontend-blazor.md` when it renders UI
+with Blazor. Both compose with `archetype/application.md`; a hybrid app may
+carry both.
+
 Add an agent-review overlay to a project that runs a separate implement agent
 and review agent over each change — pick the variant matching the workflow
 posture: `overlays/workflow-agent-review-team.md` has the reviewer read the PR
