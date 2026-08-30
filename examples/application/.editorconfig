@@ -1,4 +1,4 @@
-# EditorConfig — encodes the conventions in .claude/rules/coding-standards.md
+# EditorConfig — encodes the conventions in .claude/rules/core/coding-standards.md
 # as analyzer/naming rules so `dotnet format` and the build enforce them,
 # rather than relying on prose alone. See EnforceCodeStyleInBuild in
 # Directory.Build.props, which turns violations into build errors (with
