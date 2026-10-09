@@ -51,9 +51,18 @@ one for drift with `-Check`.
   this repo.
 - **Graduate by file, not by conditional.** Claude treats all imported prose as
   active, so it cannot skip an "if solo…" paragraph in a team project. Anything
-  that toggles per project must be its own small module selected by a profile —
-  that is why `workflow-solo`/`workflow-team` are separate files. Only split a
-  module when a real profile needs the halves apart.
+  that toggles on a condition the agent cannot observe in its context — team
+  size, lifecycle phase — must be its own module, selected by a profile or
+  added as an opt-in overlay; that is why `workflow-solo`/`workflow-team`
+  are separate files. A condition it can observe — which modules are
+  imported, a type's shape — may stay in prose. Only split a module when a
+  real profile needs the halves apart.
+- **Rule prose two agents would follow differently is a defect**, not a
+  style preference: a hedge, an undefined term, or a choice with no stated
+  selector is a finding.
+- **A claim about how a library, framework, or runtime behaves is verified
+  against the release the commit message names**, never taken from memory
+  or from the handoff.
 - **Don't add speculative profiles.** Profiles map to durable archetypes, not to
   lifecycle phases or every archetype×posture combination. There is deliberately
   no `scaffold`, `library-solo`, or `application-team` profile; posture is one
@@ -65,16 +74,24 @@ one for drift with `-Check`.
   `profiles/README.md` as an opt-in overlay a consumer adds directly (as
   `persistence-efcore.md` is) — otherwise it is dead weight.
 - **Update `core/workflow-core.md`** (or the relevant workflow overlay) whenever
-  a new convention or correction is established, per its own instruction.
+  a new convention or correction is established for consuming projects, per
+  its own instruction. A convention that binds only this repository's own
+  maintenance — how its rule changes are committed, verified, and reviewed —
+  lives in this section instead.
 - **This repo runs `overlays/workflow-agent-review-solo.md` on itself.** Rule
   prose is this repo's production code, so changes get the same two-role flow:
   implement on a `feature/` branch and end with a handoff summary (intent,
   checks done, deliberate deviations); an independent reviewer — a fresh
   context with none of the implementer's state beyond the handoff summary —
-  reviews the branch diff against `master` before the merge. The maintainer
-  adjudicates the findings, accepted ones land as new commits on the branch
-  from an implementer context, and the squash-merge happens only on the
-  maintainer's explicit approval.
+  reviews the branch diff against `master` before the merge, judging it
+  against the imported modules and the rules in this section, which this
+  repo adds to the overlay's rule set, so a finding may cite either. The
+  maintainer adjudicates the findings, accepted ones land as new commits on
+  the branch from an implementer context — one commit per accepted finding,
+  in the order the maintainer relays them, so any one can be reverted alone;
+  a fix that closes several findings is one commit naming each, placed at
+  the first of them in that order — and the squash-merge happens only on
+  the maintainer's explicit approval.
 - When changing a rule that consuming repos already copied, expect drift: run
   `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
