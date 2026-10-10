@@ -19,7 +19,7 @@ the modules for a project archetype, so adopting the rules is a one-line import.
 .claude/rules/
   core/         archetype-invariant — every profile imports all five
   archetype/    pick exactly one: library, application, game-unity
-  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, benchmarks, frontends
+  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, Dapper, benchmarks, frontends
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
@@ -36,6 +36,8 @@ tools/sync.ps1  copy a profile into a repo, or audit it for drift
 
 Add [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md)
 to any project that uses EF Core,
+[`overlays/persistence-dapper.md`](.claude/rules/overlays/persistence-dapper.md)
+to one that uses Dapper,
 [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) to one
 serving server-rendered Razor UI (MVC and/or Razor Pages), and
 [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) to
@@ -61,6 +63,7 @@ one orthogonal line. See
 | [`overlays/workflow-solo.md`](.claude/rules/overlays/workflow-solo.md) / [`workflow-team.md`](.claude/rules/overlays/workflow-team.md) | The PR posture: solo waives the PR mechanism but not the review — the maintainer approves the finished branch before the squash-merge (feature branch + squash still stand); team requires a reviewed PR with branch protection. |
 | [`overlays/workflow-agent-review-solo.md`](.claude/rules/overlays/workflow-agent-review-solo.md) / [`workflow-agent-review-team.md`](.claude/rules/overlays/workflow-agent-review-team.md) | An implement/review contract between two agents that never share a context: solo has the reviewer read the `feature/` branch diff before the squash-merge, team has it read the PR. Policy only — wire the reviewer from [`templates/reviewer-subagent.md`](.claude/rules/templates/reviewer-subagent.md). |
 | [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md) | The ORM exception to "prefer records", mapping in `OnModelCreating`, migrations, real-engine integration tests. |
+| [`overlays/persistence-dapper.md`](.claude/rules/overlays/persistence-dapper.md) | Positional records bound through the constructor, explicit column lists, parameters only, `CommandDefinition` cancellation, a unit of work as one repository method under one `DbTransaction`, DbUp migrations, integration tests against the production engine. |
 | [`overlays/benchmarks.md`](.claude/rules/overlays/benchmarks.md) | BenchmarkDotNet under `bench/`, built by CI but never run there, baselines produced locally. |
 | [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) | Server-rendered Razor UI: Razor Pages by default, thin controllers/handlers, view models never domain entities, tag helpers, Post/Redirect/Get, global antiforgery, markup tested at the boundary via `WebApplicationFactory`. |
 | [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) | Blazor Web App across all render modes: static SSR by default, per-mode DI-lifetime and state rules, prerender double-execution, JS interop timing, disposal, bUnit-first testing. |

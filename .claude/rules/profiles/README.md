@@ -9,7 +9,9 @@ imports a single profile and gets the tailored subset.
 | `application-solo` | all 5 | application | solo | — |
 | `game-unity` | all 5 | library + game-unity | team | benchmarks |
 
-Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core.
+Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core,
+or `overlays/persistence-dapper.md` when it uses Dapper; a project using both
+carries both.
 
 Add `overlays/frontend-mvc.md` when the app serves server-rendered Razor UI
 (MVC and/or Razor Pages), or `overlays/frontend-blazor.md` when it renders UI
