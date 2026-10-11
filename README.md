@@ -17,9 +17,9 @@ the modules for a project archetype, so adopting the rules is a one-line import.
 
 ```
 .claude/rules/
-  core/         archetype-invariant — every profile imports all five
-  archetype/    pick exactly one: library, application, game-unity
-  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, Dapper, benchmarks, frontends
+  core/         every profile imports all five, or four when its archetype replaces architecture.md
+  archetype/    pick exactly one: library, application, unity-package, unity-game
+  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, Dapper, benchmarks, frontends, Unity engine
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
@@ -32,7 +32,8 @@ tools/sync.ps1  copy a profile into a repo, or audit it for drift
 |---|---|---|---|---|
 | [`library-team`](.claude/rules/profiles/library-team.md) | all 5 | library | team | benchmarks |
 | [`application-solo`](.claude/rules/profiles/application-solo.md) | all 5 | application | solo | — |
-| [`game-unity`](.claude/rules/profiles/game-unity.md) | all 5 | library + game-unity | team | benchmarks |
+| [`unity-package`](.claude/rules/profiles/unity-package.md) | all 5 | library + unity-package | team | unity-engine, benchmarks |
+| [`unity-game`](.claude/rules/profiles/unity-game.md) | all but architecture | unity-game | solo | unity-engine |
 
 Add [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md)
 to any project that uses EF Core,
@@ -54,15 +55,17 @@ one orthogonal line. See
 |--------|----------------|
 | [`core/coding-standards.md`](.claude/rules/core/coding-standards.md) | Microsoft C# conventions and .NET naming: PascalCase/camelCase/`_camelCase`, `I`-prefixed interfaces, `Async` suffixes, one type per file, file-scoped namespaces, nullable enabled, XML docs on public APIs, zero-warning builds. Codified in an `.editorconfig` so `dotnet format` and the build enforce them. |
 | [`core/design-principles.md`](.claude/rules/core/design-principles.md) | OOP/SOLID guidance: composition over inheritance, dependencies pointing inward, patterns only when they earn their keep, and an explicit YAGNI constraint. |
-| [`core/architecture.md`](.claude/rules/core/architecture.md) | The invariant physical skeleton: source under `src/<ProjectName>/`, tests under `test/`, one solution file at the root, shared MSBuild properties in `Directory.Build.props`. |
+| [`core/architecture.md`](.claude/rules/core/architecture.md) | The default physical skeleton: source under `src/<ProjectName>/`, tests under `test/`, one solution file at the root, shared MSBuild properties in `Directory.Build.props`. A profile whose archetype states its own layout omits it. |
 | [`core/testing-philosophy.md`](.claude/rules/core/testing-philosophy.md) | Mandatory red/green/refactor TDD, `Should_ExpectedOutcome_When_Scenario` naming, Arrange-Act-Assert, deterministic tests (no real I/O or clock — abstract time via `TimeProvider`). |
 | [`core/workflow-core.md`](.claude/rules/core/workflow-core.md) | Minimal focused changes, imperative *why*-focused commits, feature branches merged by squash, no direct commits to the default branch. |
 | [`archetype/library.md`](.claude/rules/archetype/library.md) | Shipped packages: `dotnet pack` in CI from day one, multi-TFM matrix, public API as a semver contract, `.UnitTests`/`.IntegrationTests` split. |
 | [`archetype/application.md`](.claude/rules/archetype/application.md) | Single deployables: `.UnitTests`, no packing, config from `appsettings`/environment, relaxed docs at the app boundary. |
-| [`archetype/game-unity.md`](.claude/rules/archetype/game-unity.md) | Unity 6 packages: UPM layout, engine-agnostic core, a managed oracle for any Burst backend, headless editor tests. |
+| [`archetype/unity-package.md`](.claude/rules/archetype/unity-package.md) | Unity 6 packages: UPM layout, engine-agnostic core, a managed oracle for any Burst backend, golden-corpus pipeline tests. |
+| [`archetype/unity-game.md`](.claude/rules/archetype/unity-game.md) | Games shipped as a Unity player: replaces `core/architecture.md` with the `Assets/` layout and assembly names, humble components over plain-C# game rules, ScriptableObject data never written at runtime, no `Find`/singleton lookups, a player build per shipped platform in CI. |
 | [`overlays/workflow-solo.md`](.claude/rules/overlays/workflow-solo.md) / [`workflow-team.md`](.claude/rules/overlays/workflow-team.md) | The PR posture: solo waives the PR mechanism but not the review — the maintainer approves the finished branch before the squash-merge (feature branch + squash still stand); team requires a reviewed PR with branch protection. |
 | [`overlays/workflow-agent-review-solo.md`](.claude/rules/overlays/workflow-agent-review-solo.md) / [`workflow-agent-review-team.md`](.claude/rules/overlays/workflow-agent-review-team.md) | An implement/review contract between two agents that never share a context: solo has the reviewer read the `feature/` branch diff before the squash-merge, team has it read the PR. Policy only — wire the reviewer from [`templates/reviewer-subagent.md`](.claude/rules/templates/reviewer-subagent.md). |
 | [`overlays/persistence-efcore.md`](.claude/rules/overlays/persistence-efcore.md) | The ORM exception to "prefer records", mapping in `OnModelCreating`, migrations, real-engine integration tests. |
+| [`overlays/unity-engine.md`](.claude/rules/overlays/unity-engine.md) | C# the Unity Editor compiles: IL2CPP and stripping, assembly definitions, `csc.rsp` compiler settings, Unity-safe null checks, serialized fields, lifecycle and `Awaitable`, allocation-free per-frame code, EditMode/PlayMode tests through the Unity CLI, `.meta` and YAML asset hygiene. |
 | [`overlays/persistence-dapper.md`](.claude/rules/overlays/persistence-dapper.md) | Positional records bound through the constructor, explicit column lists, parameters only, `CommandDefinition` cancellation, a unit of work as one repository method under one `DbTransaction`, DbUp migrations, integration tests against the production engine. |
 | [`overlays/benchmarks.md`](.claude/rules/overlays/benchmarks.md) | BenchmarkDotNet under `bench/`, built by CI but never run there, baselines produced locally. |
 | [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) | Server-rendered Razor UI: Razor Pages by default, thin controllers/handlers, view models never domain entities, tag helpers, Post/Redirect/Get, global antiforgery, markup tested at the boundary via `WebApplicationFactory`. |
@@ -103,11 +106,13 @@ the `@import` lines to paste are printed for you:
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Workflow team
 ```
 
-Either way, also copy
+Either way, for SDK-style projects also copy
 [`examples/application/.editorconfig`](examples/application/.editorconfig) to
 your solution root and set
 `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>` so the coding
-standards are enforced by tooling, not just prose.
+standards are enforced by tooling, not just prose. Code the Unity Editor
+compiles is gated by `csc.rsp` and analyzers instead — see
+[`overlays/unity-engine.md`](.claude/rules/overlays/unity-engine.md).
 
 ### Project-specific rules
 

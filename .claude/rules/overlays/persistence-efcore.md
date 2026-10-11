@@ -4,8 +4,7 @@ Add when the project maps entities with Entity Framework Core.
 
 - ORM exception to the records rule: EF-mapped entities that require mutable,
   parameterless-constructible state may remain classes with settable
-  properties. This is the *only* sanctioned exception to core's "prefer records
-  / `readonly`" guidance.
+  properties. The exception covers EF-mapped entity types only.
 - Keep mapping in the `DbContext` (`OnModelCreating`) or
   `IEntityTypeConfiguration<T>` types — not scattered as data annotations on
   domain types.

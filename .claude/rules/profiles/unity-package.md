@@ -1,4 +1,4 @@
-# Profile: game-unity  — Unity package + engine-agnostic libraries
+# Profile: unity-package  — Unity package + engine-agnostic libraries
 @../core/coding-standards.md
 @../core/design-principles.md
 @../core/architecture.md
@@ -6,5 +6,6 @@
 @../core/workflow-core.md
 @../overlays/workflow-team.md
 @../archetype/library.md
-@../archetype/game-unity.md
+@../archetype/unity-package.md
+@../overlays/unity-engine.md
 @../overlays/benchmarks.md

@@ -20,17 +20,18 @@ repository's own content.
 The rules are **composable modules**, not one monolithic set, because projects of
 different scope need different subsets — even within the same tech stack:
 
-- **`core/`** (5 files) — archetype-invariant; every profile imports all of them.
-  `coding-standards.md`, `design-principles.md`, `architecture.md`,
-  `testing-philosophy.md`, `workflow-core.md`.
+- **`core/`** (5 files) — every profile imports all of them, except that a
+  profile omits `architecture.md` when its archetype states the physical
+  layout in its place. `coding-standards.md`, `design-principles.md`,
+  `architecture.md`, `testing-philosophy.md`, `workflow-core.md`.
 - **`archetype/`** — pick exactly one per project: `library.md`,
-  `application.md`, `game-unity.md`.
+  `application.md`, `unity-package.md`, `unity-game.md`.
 - **`overlays/`** — orthogonal toggles: `workflow-solo.md` / `workflow-team.md`
   (mutually exclusive; every project needs one),
   `workflow-agent-review-solo.md` / `workflow-agent-review-team.md` (mutually
   exclusive opt-ins matched to the workflow posture), `persistence-efcore.md`,
   `persistence-dapper.md`, `benchmarks.md`, `frontend-mvc.md`,
-  `frontend-blazor.md`.
+  `frontend-blazor.md`, `unity-engine.md`.
 - **`profiles/`** — thin manifests that `@import` a tailored subset. A consuming
   repo imports **one profile** and gets everything it needs.
 - **`templates/`** — skeletons a consuming repo copies and fills in:

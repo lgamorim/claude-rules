@@ -7,7 +7,12 @@ imports a single profile and gets the tailored subset.
 |---|---|---|---|---|
 | `library-team` | all 5 | library | team | benchmarks |
 | `application-solo` | all 5 | application | solo | — |
-| `game-unity` | all 5 | library + game-unity | team | benchmarks |
+| `unity-package` | all 5 | library + unity-package | team | unity-engine, benchmarks |
+| `unity-game` | all but architecture | unity-game | solo | unity-engine |
+
+Every profile imports all of `core/`, except that a profile omits
+`core/architecture.md` when its archetype states the physical layout in its
+place.
 
 Add `overlays/persistence-efcore.md` to any profile whose project uses EF Core,
 or `overlays/persistence-dapper.md` when it uses Dapper; a project using both
@@ -35,9 +40,10 @@ transient state, not a durable archetype, so it gets no profile of its own.
 ## Changing workflow posture
 
 The workflow posture baked into each profile (`team` for `library-team` and
-`game-unity`, `solo` for `application-solo`) is a **default for the common
-case, not a fixed pairing** — it reflects that libraries and shared packages
-tend to be collaborative while single-deployable apps often start solo. Any
+`unity-package`, `solo` for `application-solo` and `unity-game`) is a
+**default for the common case, not a fixed pairing** — it reflects that
+libraries and shared packages tend to be collaborative while single-deployable
+apps and games often start solo. Any
 archetype works under either posture; there is deliberately no `library-solo`
 or `application-team` profile, because posture is one orthogonal line and
 enumerating every combination is the fan-out the module system exists to avoid.
