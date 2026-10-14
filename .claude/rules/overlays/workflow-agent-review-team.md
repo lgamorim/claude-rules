@@ -17,10 +17,30 @@ Roles — never the same context:
   The PR description states the intent, the tests added, and any deliberate rule
   deviations, so the reviewer judges them as choices rather than misses.
 - **Reviewer** — reads the diff fresh, with none of the implementer's working
-  context — the PR description is the only implementer-authored input it
-  receives. It checks the change against the rules this repo already imports,
-  plus any path-scoped rules matching the touched files, and leaves inline
-  comments. It never pushes, never merges, and never resolves its own comments.
+  context — the PR description, and in a follow-up review the thread replies,
+  are the only implementer-authored inputs it receives. It checks the change
+  against the rules this repo already imports, plus any path-scoped rules
+  matching the touched files, and leaves inline comments plus a summary
+  comment naming the commit it reviewed. It never pushes, never merges, and
+  never resolves its own comments.
+
+Review rounds:
+- A PR gets exactly one full review, in which the reviewer reads the PR's
+  whole diff against its base branch.
+- After the maintainer adjudicates and the accepted findings are fixed, any
+  further review is a follow-up review. It covers only the commits pushed
+  since the commit the previous review named (e.g.
+  `git diff <reviewed-sha>..feature/x`). It answers exactly two questions —
+  is each accepted finding resolved, and do the changed lines violate an
+  imported rule — and does not reopen content outside that range.
+- The follow-up reviewer's inputs are the implementer's replies on the
+  accepted findings' comment threads, the reviewed commit's SHA, and the
+  list of accepted findings. The SHA and the list come from the maintainer's
+  adjudication, never from the implementer.
+- A follow-up review is optional: the maintainer may waive it (e.g. for a
+  one-line fix) and approve the PR directly. A second full review happens
+  only when the maintainer asks for one, e.g. when the fixes changed the
+  PR's scope substantially.
 
 Boundaries:
 - The reviewer advises; it does not gate. A human adjudicates — disagreements
