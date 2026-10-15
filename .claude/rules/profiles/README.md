@@ -28,10 +28,10 @@ and review agent over each change — pick the variant matching the workflow
 posture: `overlays/workflow-agent-review-team.md` has the reviewer read the PR
 (**team** posture), `overlays/workflow-agent-review-solo.md` has it read the
 `feature/` branch diff before the squash-merge (**solo** posture, no PR). Both
-are policy only — the agent/CI wiring lives in the consuming repo's
-automation, not here; `templates/reviewer-subagent.md` is a skeleton for that
-wiring (copy it to the consuming repo's `.claude/agents/` and pin the reviewer
-model there).
+are policy only — which model runs each role is pinned in the consuming
+repo, not here; `templates/reviewer-subagent.md` in this rule set's source
+repository is a skeleton for the `code-reviewer` agent the overlays look for
+in the consuming repo's `.claude/agents/` (copy it there and pin the model).
 
 New repo with no code yet? Don't reach for a profile — import the core files
 directly until the archetype is clear, then adopt its profile. A fresh repo is a

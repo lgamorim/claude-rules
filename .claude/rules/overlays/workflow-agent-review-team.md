@@ -7,10 +7,16 @@ opens the pull request, a separate agent reviews that PR. Compose with
 `workflow-agent-review-solo.md` instead).
 
 This overlay defines the *contract* between the two roles. It deliberately says
-nothing about which models run or how the agents are triggered (in-session
-subagents, a CI action, an SDK harness) — that wiring is repo automation,
-configured outside the rule set, not policy that belongs here. A starting
-skeleton for the reviewer agent lives in `templates/reviewer-subagent.md`.
+nothing about which models run them — that pinning is repo automation,
+configured outside the rule set, not policy that belongs here. The reviewer
+runs as the agent named `code-reviewer` in the consuming repo's
+`.claude/agents/` when one exists, for which `templates/reviewer-subagent.md`
+in this rule set's source repository is a skeleton, and otherwise as a fresh
+in-session subagent given this contract; the maintainer may instead run it
+in a separate session or a CI action. A `.claude/agents/` without that agent
+is not a reason to skip the review, and an implementer never writes the
+definition as part of the change it is delivering: adding it is a change of
+its own.
 
 Roles — never the same context:
 - **Implementer** — delivers the change on a `feature/` branch and opens the PR.
