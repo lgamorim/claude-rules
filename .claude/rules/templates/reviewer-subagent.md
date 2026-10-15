@@ -11,9 +11,10 @@ tools: Read, Grep, Glob, Bash
 
 <!--
 Copy this into a CONSUMING repo's `.claude/agents/` (e.g. as
-`code-reviewer.md`) and fill in the placeholders — agent wiring is repo
-automation and does NOT belong in the shared rule set. This is the reviewer
-role from `overlays/workflow-agent-review-solo.md` /
+`code-reviewer.md`) and fill in the placeholders — the agent-review overlays
+run the reviewer as the agent named `code-reviewer` there, and leave the
+model pinning to the consuming repo. This is the reviewer role from
+`overlays/workflow-agent-review-solo.md` /
 `workflow-agent-review-team.md`; `model:` and `effort:` are where the
 reviewing model and its reasoning effort are pinned (omit `effort:` to inherit
 the session's level; unsupported models ignore it). `tools:` deliberately

@@ -46,7 +46,9 @@ Review rounds:
 - A follow-up review is optional: the maintainer may waive it (e.g. for a
   one-line fix) and approve the PR directly. A second full review happens
   only when the maintainer asks for one, e.g. when the fixes changed the
-  PR's scope substantially.
+  PR's scope substantially. Before it, an implementer context updates the
+  PR description to describe the whole PR as it stands, and that description
+  is the review's only implementer-authored input.
 
 Boundaries:
 - The reviewer advises; it does not gate. A human adjudicates — disagreements

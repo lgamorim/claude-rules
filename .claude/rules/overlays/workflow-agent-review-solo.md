@@ -51,7 +51,9 @@ Review rounds:
 - A follow-up review is optional: the maintainer may waive it (e.g. for a
   one-line fix) and authorize the squash-merge directly. A second full review
   happens only when the maintainer asks for one, e.g. when the fixes changed
-  the branch's scope substantially.
+  the branch's scope substantially. Before it, an implementer context writes
+  a fresh handoff summary covering the whole branch as it stands, and that
+  summary is the review's only implementer-authored input.
 
 Boundaries:
 - The reviewer advises; it does not gate. The maintainer adjudicates the
