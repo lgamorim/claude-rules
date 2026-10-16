@@ -94,6 +94,19 @@ one for drift with `-Check`.
   a fix that closes several findings is one commit naming each, placed at
   the first of them in that order — and the squash-merge happens only on
   the maintainer's explicit approval.
+- **A review reports a finding only in one of five categories**, each
+  citing the rule it violates: a contradiction, naming both locations;
+  divergent outputs, naming the two concrete outputs two agents would
+  produce — "could be read two ways" alone is not a finding; a false claim
+  about a library, framework, runtime, or tool, where a claim naming no
+  release or one the reviewer could not check is reported as unverified;
+  a breach of any other rule the review judges against; or hygiene. It
+  does not re-raise an item the maintainer lists as already adjudicated,
+  and it ends with what it verified, in at most five lines.
+- **Hygiene:** every line a change's diff adds to a Markdown file is at
+  most 80 characters, excluding its line ending, unless it is a table row;
+  no line a change's diff adds to any file ends in whitespace; commit
+  messages follow `core/workflow-core.md`.
 - When changing a rule that consuming repos already copied, expect drift: run
   `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
