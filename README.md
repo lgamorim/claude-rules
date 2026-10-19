@@ -24,6 +24,7 @@ the modules for a project archetype, so adopting the rules is a one-line import.
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
 tools/sync.ps1  copy a profile into a repo, or audit it for drift
+tools/check.ps1 check this repo's own maintenance rules
 ```
 
 ## Profiles

@@ -12,8 +12,8 @@ C# code, either directly in this repo or by being referenced/copied into other
 
 A reference project showing these rules applied to real code lives under
 `examples/application/` (see "Example" below). This repository itself ships only
-rule files and a sync script — there are no build, lint, or test commands for the
-repository's own content.
+rule files and two scripts — there is no build or test command for the
+repository's own content; `tools/check.ps1` is its one lint command.
 
 ## Structure
 
@@ -40,7 +40,12 @@ different scope need different subsets — even within the same tech stack:
   agent-review overlays.
 
 `tools/sync.ps1` copies a profile and its modules into a target repo, or audits
-one for drift with `-Check`.
+one for drift with `-Check`. `tools/check.ps1` checks this repository itself:
+profile and example imports resolve, no module is dead weight, the lines a
+branch adds meet the hygiene rule, and the profile tables in `README.md` and
+`profiles/README.md` agree. It prints `file:line` for each failure and exits
+non-zero. `.github/workflows/check.yml` runs it on every push, alongside the
+example's build, tests, and `dotnet format --verify-no-changes`.
 
 ## Rules for working on this repository
 
@@ -107,6 +112,10 @@ one for drift with `-Check`.
   most 80 characters, excluding its line ending, unless it is a table row;
   no line a change's diff adds to any file ends in whitespace; commit
   messages follow `core/workflow-core.md`.
+- **The implementer runs `tools/check.ps1` on the committed branch before
+  the handoff summary**, and lists the run among the checks done. Every
+  failure it prints is fixed or named in the summary as a deliberate
+  deviation.
 - When changing a rule that consuming repos already copied, expect drift: run
   `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
