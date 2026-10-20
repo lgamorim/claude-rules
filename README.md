@@ -92,7 +92,11 @@ imports into your repo, then import the profile from your `CLAUDE.md`:
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo
 ```
 
-Re-run with `-Check` to audit a repo for drift instead of overwriting it:
+Each sync stamps the source commit into `.claude/rules/.sync-source`; commit it
+with the copied files. Re-run with `-Check` to audit a repo for drift instead of
+overwriting it — it also flags as `EXTRA` any module the set no longer contains,
+and lists the commits since the stamped one that touched a file the repo carries
+or should carry:
 
 ```powershell
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Check

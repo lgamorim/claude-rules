@@ -79,7 +79,10 @@ add this repo under `.claude/rules-src/`, then in your root `CLAUDE.md`:
 Option B — copy (self-contained): run `tools/sync.ps1 -Target <repo> -Profile
 application-solo` to copy the profile and every module it imports into the
 target's `.claude/rules/`, then import the profile from your `CLAUDE.md`.
-Re-run with `-Check` to report drift.
+The sync stamps the source commit into `.claude/rules/.sync-source`; commit it
+with the copied files. Re-run with `-Check` to report drift, files the set no
+longer contains, and the commits since the stamped one that touched a file the
+target carries or should carry.
 
 Recompose while copying with `-Workflow solo|team` (swap the posture) and
 `-Add <overlay>` (append an opt-in overlay, e.g. `persistence-efcore`). Pass the
