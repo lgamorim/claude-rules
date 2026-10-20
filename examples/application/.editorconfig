@@ -131,3 +131,10 @@ dotnet_naming_rule.parameters_locals_are_camel_case.severity = warning
 # non-blocking suggestion here; all other rules above still apply.
 [test/**/*.cs]
 dotnet_diagnostic.IDE0005.severity = suggestion
+
+# --- EF Core migrations ---
+# `dotnet ef migrations add` writes these files. overlays/persistence-efcore.md
+# exempts them from coding-standards.md and keeps the analyzers and
+# `dotnet format` off them by marking them generated.
+[src/**/Data/Migrations/*.cs]
+generated_code = true

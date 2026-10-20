@@ -142,6 +142,9 @@ dotnet build
 dotnet test
 ```
 
+`dotnet test` needs a running Docker engine: the example's integration tests
+start Postgres with Testcontainers.
+
 There is no `src/` or `test/` at the repository root — this repo ships rules
 only; example code lives under `examples/`.
 

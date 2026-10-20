@@ -128,6 +128,8 @@ via `@../../.claude/rules/profiles/application-solo.md` and adds
 project-specific notes; see `examples/application/README.md` for a guided tour of
 which file demonstrates which rule.
 
-Build and test it with `dotnet build` / `dotnet test` from that directory. There
-is no `src/` or `test/` at the repo root — this repository ships rules only;
-example/reference code lives under `examples/`.
+Build and test it with `dotnet build` / `dotnet test` from that directory;
+`dotnet test` needs a running Docker engine, since the integration tests start
+Postgres with Testcontainers. There is no `src/` or `test/` at the repo
+root — this repository ships rules only; example/reference code lives under
+`examples/`.
