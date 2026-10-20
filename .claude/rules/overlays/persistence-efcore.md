@@ -10,6 +10,11 @@ Add when the project maps entities with Entity Framework Core.
   domain types.
 - Schema changes go through EF migrations checked into the repo; never
   hand-edit the database.
+- Migrations are `dotnet ef migrations add` output, so core's coding
+  standards do not bind them. Keep them in one folder that `.editorconfig`
+  marks `generated_code = true`, which keeps the analyzers and
+  `dotnet format` off them. A migration is edited only to change what it
+  does, such as adding a data step, never to satisfy a style rule.
 - Anything asserting **provider behavior** — SQL translation, migrations,
   constraints, transactions, concurrency tokens — belongs under
   `.IntegrationTests` against a real engine (Testcontainers/Npgsql). An
