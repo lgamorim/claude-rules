@@ -92,14 +92,15 @@ imports into your repo, then import the profile from your `CLAUDE.md`:
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo
 ```
 
-Each sync stamps the source commit into `.claude/rules/.sync-source`; commit it
-with the copied files. Re-run with `-Check` to audit a repo for drift instead of
-overwriting it — it also flags as `EXTRA` any module the set no longer contains,
-and lists the commits since the stamped one that touched a file the repo carries
-or should carry:
+Each sync stamps the source commit and the set's composition — profile, posture,
+added overlays — into `.claude/rules/.sync-source`; commit it with the copied
+files. Re-run with `-Check` to audit a repo for drift instead of overwriting it
+— it reads the set from the stamp, flags as `EXTRA` any module the set no longer
+contains, and lists the commits since the stamped one that touched a file the
+repo carries or should carry:
 
 ```powershell
-./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Check
+./tools/sync.ps1 -Target C:\path\to\your-repo -Check
 ```
 
 Need a different posture or an extra overlay? Recompose while copying — `-Workflow
@@ -110,6 +111,12 @@ the `@import` lines to paste are printed for you:
 ```powershell
 ./tools/sync.ps1 -Target C:\path\to\your-repo -Profile application-solo -Workflow team
 ```
+
+The stamp records the recomposition too, so `-Check` still needs only
+`-Target`; flags passed with it must describe the stamped set, or it reports the
+mismatch and stops. A repo whose stamp holds only a commit, or that has no
+stamp, records no composition: audit it with the `-Profile`, `-Workflow`, and
+`-Add` it was synced with.
 
 Either way, for SDK-style projects also copy
 [`examples/application/.editorconfig`](examples/application/.editorconfig) to

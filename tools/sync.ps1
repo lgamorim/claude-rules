@@ -16,8 +16,10 @@
 
     A sync stamps the source commit (HEAD of this checkout) into the target's
     `.claude/rules/.sync-source`, so a later audit knows what it was synced
-    from. Claude Code (2.1.207) loads the `.md` files under `.claude/rules/`
-    as rules; this file is not one, so Claude Code does not load it as a rule.
+    from, followed by the set's composition: the profile, the workflow
+    posture the set ends up with, and the overlays -Add appended to it.
+    Claude Code (2.1.207) loads the `.md` files under `.claude/rules/` as
+    rules; this file is not one, so Claude Code does not load it as a rule.
 
     With -Check, nothing is written: the script reports MISSING or DRIFT for
     each file instead, so a consuming repo can be audited against the source.
@@ -27,9 +29,15 @@
     the source commit and the stamped one, and lists the commits between them
     that touched a file in the set or an EXTRA file. A sync lists the same
     files as `extra` but never deletes them: it cannot tell a dropped module
-    from a file the consumer added there. Pass the same -Workflow/-Add
-    arguments to -Check that were used to sync, or the audit will compare
-    against the wrong set.
+    from a file the consumer added there.
+
+    -Check needs only -Target when the stamp records the composition: the
+    audit compares against the stamped set. Flags passed with it describe the
+    whole set, as for a sync, and when that set differs from the stamped one
+    the script reports both and stops without auditing. A stamp holding only
+    the commit, written by an older sync, or no stamp at all records no
+    composition, so -Check then needs -Profile and the same -Workflow/-Add
+    arguments that were used to sync, or it compares against the wrong set.
 
 .EXAMPLE
     ./tools/sync.ps1 -Target C:\Git\me\my-lib -Profile library-team
@@ -38,12 +46,15 @@
     ./tools/sync.ps1 -Target C:\Git\me\my-app -Profile application-solo -Workflow team
 
 .EXAMPLE
+    ./tools/sync.ps1 -Target C:\Git\me\my-app -Check
+
+.EXAMPLE
     ./tools/sync.ps1 -Target C:\Git\me\my-app -Profile application-solo -Add persistence-efcore -Check
 #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)] [string] $Target,
-    [Parameter(Mandatory)] [string] $Profile,
+    [string] $Profile,
     [ValidateSet('solo', 'team')] [string] $Workflow,
     [string[]] $Add = @(),
     [switch] $Check
@@ -73,19 +84,62 @@ function Invoke-SourceGit {
     if ($LASTEXITCODE -eq 0) { $output }
 }
 
-$rulesRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\.claude\rules')).Path
-$profilePath = Join-Path $rulesRoot "profiles\$Profile.md"
+# The composition as the flags that rebuild it, e.g.
+# `-Profile application-solo -Workflow team -Add persistence-efcore`.
+function Format-Set([string] $ProfileName, [string] $Posture, [string[]] $Overlays) {
+    $text = "-Profile $ProfileName"
+    if ($Posture) { $text += " -Workflow $Posture" }
+    if ($Overlays.Count -gt 0) { $text += " -Add $($Overlays -join ',')" }
+    $text
+}
 
+$rulesRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\.claude\rules')).Path
+
+if (-not (Test-Path $Target)) { throw "Target repo not found: $Target" }
+# Absolute from here on: .NET calls such as File.WriteAllText resolve a
+# relative path against the process directory, which Set-Location never moves.
+$Target = (Resolve-Path $Target).Path
+
+# The stamp holds the source commit on its first line, then one `key: value`
+# line each for the profile, the workflow posture, and the appended overlays.
+# A stamp from an older sync holds the commit alone.
+$stampPath = Join-Path $Target '.claude\rules\.sync-source'
+$targetSha = $null
+$stamp = @{}
+if (Test-Path $stampPath) {
+    $stampLines = @(Get-Content $stampPath -Encoding utf8)
+    if ($stampLines.Count -gt 0) { $targetSha = "$($stampLines[0])".Trim() }
+    foreach ($line in $stampLines | Select-Object -Skip 1) {
+        if ($line -match '^(profile|workflow|add):(.*)$') { $stamp[$Matches[1]] = $Matches[2].Trim() }
+    }
+}
+$stampedProfile = $stamp['profile']
+$stampedPosture = $stamp['workflow']
+$stampedAdd = @("$($stamp['add'])" -split '[,\s]+' | Where-Object { $_ })
+
+# Without -Profile, -Check audits the set the stamp records.
+$fromStamp = -not $Profile
+if ($fromStamp) {
+    if ($Workflow -or $Add.Count -gt 0) {
+        throw '-Workflow and -Add describe a set only together with -Profile.'
+    }
+    if (-not $Check) { throw 'A sync needs -Profile; only -Check reads the set from the stamp.' }
+    if (-not $stampedProfile) {
+        $why = if (Test-Path $stampPath) { "$stampPath records no composition" } else { "$Target has no .sync-source stamp" }
+        throw "$why, so -Check needs the -Profile, -Workflow, and -Add arguments the target was synced with."
+    }
+    $Profile = $stampedProfile
+    if ($stampedPosture) { $Workflow = $stampedPosture }
+    $Add = $stampedAdd
+}
+
+$profilePath = Join-Path $rulesRoot "profiles\$Profile.md"
 if (-not (Test-Path $profilePath)) {
     $available = Get-ChildItem (Join-Path $rulesRoot 'profiles') -Filter '*.md' |
                  Where-Object { $_.BaseName -ne 'README' } |
                  ForEach-Object { $_.BaseName }
     throw "Unknown profile '$Profile'. Available: $($available -join ', ')"
 }
-if (-not (Test-Path $Target)) { throw "Target repo not found: $Target" }
-# Absolute from here on: .NET calls such as File.WriteAllText resolve a
-# relative path against the process directory, which Set-Location never moves.
-$Target = (Resolve-Path $Target).Path
 
 # Modules the profile imports, in declaration order.
 $modules = @(Select-String -Path $profilePath -Pattern '^\s*@(\S+\.md)\s*$' |
@@ -112,6 +166,8 @@ if ($Workflow) {
 }
 
 # Append opt-in overlays (e.g. persistence-efcore, workflow-agent-review-solo).
+# Only those the set did not already hold are recorded in the stamp.
+$appended = @()
 foreach ($name in $Add) {
     $overlayPath = Join-Path $rulesRoot "overlays\$name.md"
     if (-not (Test-Path $overlayPath)) {
@@ -122,6 +178,7 @@ foreach ($name in $Add) {
     $overlay = (Resolve-Path $overlayPath).Path
     if ($modules -notcontains $overlay) {
         $modules += $overlay
+        $appended += $name
         $composed = $true
     }
 }
@@ -135,6 +192,23 @@ foreach ($variant in 'solo', 'team') {
     $review = @($modules | Where-Object { $_ -like "*overlays\workflow-agent-review-$variant.md" })
     if ($review.Count -gt 0 -and ($posture.Count -eq 0 -or $posture[0] -notlike "*workflow-$variant.md")) {
         throw "Overlay 'workflow-agent-review-$variant' requires the '$variant' workflow posture; use -Workflow $variant or the matching agent-review variant."
+    }
+}
+
+# The posture the set ends up with, whether the profile or -Workflow chose it.
+$setPosture = if ($posture.Count -gt 0) {
+    [System.IO.Path]::GetFileNameWithoutExtension($posture[0]) -replace '^workflow-', ''
+}
+$setText = Format-Set $Profile $setPosture $appended
+
+# Flags passed to -Check must describe the stamped set; picking either one
+# silently would audit a set the user did not ask for.
+if ($Check -and -not $fromStamp -and $stampedProfile) {
+    $sameAdd = (@($appended | Sort-Object) -join ',') -eq (@($stampedAdd | Sort-Object) -join ',')
+    if ($Profile -ne $stampedProfile -or "$setPosture" -ne "$stampedPosture" -or -not $sameAdd) {
+        Write-Output "Flags    $setText"
+        Write-Output "Stamped  $(Format-Set $stampedProfile $stampedPosture $stampedAdd)"
+        throw 'The flags describe a different set than .sync-source records. Drop them to audit the stamped set, or sync with them to change it.'
     }
 }
 
@@ -167,16 +241,12 @@ $extras = @(foreach ($folder in 'core', 'archetype', 'overlays', 'profiles') {
 $pathspec = @($expected.Keys) + @($extras) |
             ForEach-Object { '.claude/rules/' + $_.Replace('\', '/') }
 
-$stampPath = Join-Path $Target '.claude\rules\.sync-source'
 $sourceSha = Invoke-SourceGit rev-parse HEAD
 
 if ($Check) {
-    $targetSha = if (Test-Path $stampPath) {
-        "$(Get-Content $stampPath -TotalCount 1 -Encoding utf8)".Trim()
-    }
-
     Write-Output "Source   $(if ($sourceSha) { $sourceSha } else { '(not a git checkout)' })"
     Write-Output "Target   $(if ($targetSha) { $targetSha } else { '(no .sync-source stamp)' })"
+    Write-Output "Set      $setText $(if ($fromStamp) { '(from .sync-source)' } else { '(from flags)' })"
 
     if ($sourceSha -and $targetSha -and $sourceSha -ne $targetSha) {
         if (-not (Invoke-SourceGit rev-parse --verify --quiet "$targetSha^{commit}")) {
@@ -244,9 +314,15 @@ if ($extras.Count -gt 0) {
 }
 
 if ($sourceSha) {
-    # LF and no BOM, so the stamp reads the same in any checkout of the target.
-    [System.IO.File]::WriteAllText($stampPath, "$sourceSha`n")
-    Write-Output "stamped  .sync-source $sourceSha"
+    # An empty value gets no space after its colon, so no line of the stamp
+    # ends in whitespace. LF and no BOM, so it reads the same in any checkout
+    # of the target.
+    $stampText = "$sourceSha`n"
+    foreach ($field in @(('profile', $Profile), ('workflow', $setPosture), ('add', ($appended -join ', ')))) {
+        $stampText += if ($field[1]) { "$($field[0]): $($field[1])`n" } else { "$($field[0]):`n" }
+    }
+    [System.IO.File]::WriteAllText($stampPath, $stampText)
+    Write-Output "stamped  .sync-source $sourceSha $setText"
     if (Invoke-SourceGit status --porcelain '--' $pathspec) {
         Write-Warning 'Synced files have uncommitted changes in the source, which the stamped commit does not contain.'
     }

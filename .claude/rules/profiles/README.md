@@ -79,14 +79,19 @@ add this repo under `.claude/rules-src/`, then in your root `CLAUDE.md`:
 Option B — copy (self-contained): run `tools/sync.ps1 -Target <repo> -Profile
 application-solo` to copy the profile and every module it imports into the
 target's `.claude/rules/`, then import the profile from your `CLAUDE.md`.
-The sync stamps the source commit into `.claude/rules/.sync-source`; commit it
-with the copied files. Re-run with `-Check` to report drift, files the set no
-longer contains, and the commits since the stamped one that touched a file the
-target carries or should carry.
+The sync stamps the source commit and the set's composition — profile, posture,
+added overlays — into `.claude/rules/.sync-source`; commit it with the copied
+files. Re-run with `-Check` to report drift, files the set no longer contains,
+and the commits since the stamped one that touched a file the target carries or
+should carry.
 
 Recompose while copying with `-Workflow solo|team` (swap the posture) and
-`-Add <overlay>` (append an opt-in overlay, e.g. `persistence-efcore`). Pass the
-same flags to `-Check` later, or the audit compares against the wrong set.
+`-Add <overlay>` (append an opt-in overlay, e.g. `persistence-efcore`). The
+stamp records the recomposition, so `tools/sync.ps1 -Target <repo> -Check`
+audits the stamped set without the flags; flags passed with `-Check` must
+describe that set, or it reports the mismatch and stops. A stamp holding only
+a commit, or no stamp at all, records no composition: pass `-Check` the
+`-Profile`, `-Workflow`, and `-Add` the target was synced with.
 
 ## Path-scoped domain rules
 
