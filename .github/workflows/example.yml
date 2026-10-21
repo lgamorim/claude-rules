@@ -1,0 +1,29 @@
+name: example
+
+# A separate workflow because `paths` filters a whole workflow, not a job:
+# the example's build and its Docker-backed integration tests run only when
+# the example or this file changes, while check.yml still runs on every push.
+on:
+  push:
+    paths:
+      - examples/application/**
+      - .github/workflows/example.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/application
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet build ContosoOrders.slnx
+      - run: dotnet test ContosoOrders.slnx --no-build
+      - run: dotnet format ContosoOrders.slnx --verify-no-changes

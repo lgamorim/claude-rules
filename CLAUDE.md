@@ -44,8 +44,10 @@ one for drift with `-Check`. `tools/check.ps1` checks this repository itself:
 profile and example imports resolve, no module is dead weight, the lines a
 branch adds meet the hygiene rule, and the profile tables in `README.md` and
 `profiles/README.md` agree. It prints `file:line` for each failure and exits
-non-zero. `.github/workflows/check.yml` runs it on every push, alongside the
-example's build, tests, and `dotnet format --verify-no-changes`.
+non-zero. `.github/workflows/check.yml` runs it on every push;
+`.github/workflows/example.yml` runs the example's build, tests, and
+`dotnet format --verify-no-changes` on a push that changes a file under
+`examples/application/` or that workflow file.
 
 ## Rules for working on this repository
 
