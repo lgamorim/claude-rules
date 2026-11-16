@@ -36,8 +36,9 @@ for one area it and `architecture-clean.md` are alternatives.
 
 Add `overlays/architecture-areas.md` when an architecture overlay applies to
 part of the repo and not all of it; a repo that imports both of the overlays
-above always does. It has the root `CLAUDE.md` say which area follows which
-overlay, in a table like this one:
+above always does, and `tools/sync.ps1` refuses to copy or audit a set that
+holds both without it. It has the root `CLAUDE.md` say which area follows
+which overlay, in a table like this one:
 
     ## Architecture areas
 

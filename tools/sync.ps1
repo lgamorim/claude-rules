@@ -195,6 +195,18 @@ foreach ($variant in 'solo', 'team') {
     }
 }
 
+# `architecture-clean` and `architecture-vertical-slice` are alternatives for
+# one area, so a set holding both must also hold `architecture-areas`, whose
+# table says which area follows which.
+$styles = @('clean', 'vertical-slice' | Where-Object {
+    $style = $_
+    @($modules | Where-Object { $_ -like "*overlays\architecture-$style.md" }).Count -gt 0
+})
+$areas = @($modules | Where-Object { $_ -like '*overlays\architecture-areas.md' })
+if ($styles.Count -eq 2 -and $areas.Count -eq 0) {
+    throw "Overlays 'architecture-clean' and 'architecture-vertical-slice' are alternatives for one area; a set holding both requires 'architecture-areas': add it with -Add."
+}
+
 # The posture the set ends up with, whether the profile or -Workflow chose it.
 $setPosture = if ($posture.Count -gt 0) {
     [System.IO.Path]::GetFileNameWithoutExtension($posture[0]) -replace '^workflow-', ''
