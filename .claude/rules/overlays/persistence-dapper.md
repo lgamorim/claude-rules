@@ -6,6 +6,15 @@ Dapper read then materializes into its own record, never into an EF-mapped
 entity, and EF migrations are the repo's one migration mechanism, so the DbUp
 mechanism below does not apply.
 
+In an area that follows `architecture-vertical-slice.md` there is no
+Application or Infrastructure layer, and the rules below read this way.
+The slice's handler is the repository type: it holds and runs the slice's
+SQL, and a unit of work is one handler's `HandleAsync`. No repository
+interface is written. A multi-column result materializes into the slice's
+response when one row is the whole response, and otherwise into a record
+declared in the slice's folder. The handler is tested under
+`.IntegrationTests`, and no unit test drives it against a test double.
+
 - A multi-column result materializes into a positional `record` class — not a
   `record struct`, and declaring no constructor besides the positional one —
   so Dapper binds through the constructor and throws when the column count,

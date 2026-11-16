@@ -29,6 +29,23 @@ or Hexagonal architecture; a layered application takes it too). It composes
 with `archetype/application.md` and with the persistence and frontend
 overlays.
 
+Add `overlays/architecture-vertical-slice.md` instead when each use case is
+built as one slice — its handler, request, response, and data access in one
+folder of the area's single project. It composes with the same modules, and
+for one area it and `architecture-clean.md` are alternatives.
+
+Add `overlays/architecture-areas.md` when an architecture overlay applies to
+part of the repo and not all of it; a repo that imports both of the overlays
+above always does. It has the root `CLAUDE.md` say which area follows which
+overlay, in a table like this one:
+
+    ## Architecture areas
+
+    | Area | Paths | Overlays |
+    |---|---|---|
+    | Ordering | `src/Ordering.*/**`, `test/Ordering.*/**` | `architecture-clean.md` |
+    | Catalog | `src/Catalog/**`, `test/Catalog.*/**` | `architecture-vertical-slice.md` |
+
 Add an agent-review overlay to a project that runs a separate implement agent
 and review agent over each change — pick the variant matching the workflow
 posture: `overlays/workflow-agent-review-team.md` has the reviewer read the PR

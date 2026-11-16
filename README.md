@@ -47,7 +47,13 @@ serving server-rendered Razor UI (MVC and/or Razor Pages), and
 one rendering UI with Blazor. Add
 [`overlays/architecture-clean.md`](.claude/rules/overlays/architecture-clean.md)
 to an application that separates its Domain, Application, and
-Infrastructure layers into projects.
+Infrastructure layers into projects, or
+[`overlays/architecture-vertical-slice.md`][vertical-slice] to one built as
+one slice per use case. Add [`overlays/architecture-areas.md`][areas] when
+an architecture overlay applies to only part of a repo.
+
+[vertical-slice]: .claude/rules/overlays/architecture-vertical-slice.md
+[areas]: .claude/rules/overlays/architecture-areas.md
 
 The workflow posture in each profile is a **default, not a fixed pairing** —
 there is deliberately no `library-solo` or `application-team`, because posture is
@@ -76,6 +82,8 @@ one orthogonal line. See
 | [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) | Server-rendered Razor UI: Razor Pages by default, thin controllers/handlers, view models never domain entities, tag helpers, Post/Redirect/Get, global antiforgery, markup tested at the boundary via `WebApplicationFactory`. |
 | [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) | Blazor Web App across all render modes: static SSR by default, per-mode DI-lifetime and state rules, prerender double-execution, JS interop timing, disposal, bUnit-first testing. |
 | [`overlays/architecture-clean.md`](.claude/rules/overlays/architecture-clean.md) | Clean, Onion, or Hexagonal layering, and what a layered application becomes under core's dependency rule: `Domain`/`Application`/`Infrastructure` projects per area with references pointing inward, I/O behind interfaces the Application layer declares, an all-`internal` Infrastructure behind one registration method, hosts that make one call into the Application layer per request. |
+| [`overlays/architecture-vertical-slice.md`][vertical-slice] | Vertical Slice architecture: one class-library project per area, one folder per use case holding its handler, request, response, and endpoint, handlers that do their own data access with no interface between, area types `internal` unless a host uses them, one registration method and one endpoint-mapping method for the host to call, database-reaching handlers tested against the real engine. |
+| [`overlays/architecture-areas.md`][areas] | Different architecture overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
 
 ## Using the rules in your repo
 
