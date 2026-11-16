@@ -19,7 +19,8 @@ the modules for a project archetype, so adopting the rules is a one-line import.
 .claude/rules/
   core/         every profile imports all five, or four when its archetype replaces architecture.md
   archetype/    pick exactly one: library, application, unity-package, unity-game
-  overlays/     orthogonal toggles: workflow posture, agent review, EF Core, Dapper, benchmarks, frontends, Unity engine
+  overlays/     orthogonal toggles: workflow posture, agent review, EF Core,
+                Dapper, benchmarks, frontends, Unity engine, architecture
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
@@ -43,7 +44,10 @@ to one that uses Dapper,
 [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) to one
 serving server-rendered Razor UI (MVC and/or Razor Pages), and
 [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) to
-one rendering UI with Blazor.
+one rendering UI with Blazor. Add
+[`overlays/architecture-clean.md`](.claude/rules/overlays/architecture-clean.md)
+to an application that separates its Domain, Application, and
+Infrastructure layers into projects.
 
 The workflow posture in each profile is a **default, not a fixed pairing** —
 there is deliberately no `library-solo` or `application-team`, because posture is
@@ -71,6 +75,7 @@ one orthogonal line. See
 | [`overlays/benchmarks.md`](.claude/rules/overlays/benchmarks.md) | BenchmarkDotNet under `bench/`, built by CI but never run there, baselines produced locally. |
 | [`overlays/frontend-mvc.md`](.claude/rules/overlays/frontend-mvc.md) | Server-rendered Razor UI: Razor Pages by default, thin controllers/handlers, view models never domain entities, tag helpers, Post/Redirect/Get, global antiforgery, markup tested at the boundary via `WebApplicationFactory`. |
 | [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) | Blazor Web App across all render modes: static SSR by default, per-mode DI-lifetime and state rules, prerender double-execution, JS interop timing, disposal, bUnit-first testing. |
+| [`overlays/architecture-clean.md`](.claude/rules/overlays/architecture-clean.md) | Clean, Onion, or Hexagonal layering, and what a layered application becomes under core's dependency rule: `Domain`/`Application`/`Infrastructure` projects per area with references pointing inward, I/O behind interfaces the Application layer declares, an all-`internal` Infrastructure behind one registration method, hosts that make one call into the Application layer per request. |
 
 ## Using the rules in your repo
 

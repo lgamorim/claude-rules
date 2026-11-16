@@ -23,6 +23,12 @@ Add `overlays/frontend-mvc.md` when the app serves server-rendered Razor UI
 with Blazor. Both compose with `archetype/application.md`; a hybrid app may
 carry both.
 
+Add `overlays/architecture-clean.md` when the application separates its
+Domain, Application, and Infrastructure layers into projects (Clean, Onion,
+or Hexagonal architecture; a layered application takes it too). It composes
+with `archetype/application.md` and with the persistence and frontend
+overlays.
+
 Add an agent-review overlay to a project that runs a separate implement agent
 and review agent over each change — pick the variant matching the workflow
 posture: `overlays/workflow-agent-review-team.md` has the reviewer read the PR
