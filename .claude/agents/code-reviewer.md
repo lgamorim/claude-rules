@@ -5,7 +5,7 @@ description: >
   Delegate to it when a branch is ready for its full review or for a
   follow-up review — it reads the diff fresh and reports findings; it makes
   no changes itself.
-model: claude-fable-5-1
+model: fable
 effort: xhigh
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
 ---
@@ -16,13 +16,19 @@ This repository's own reviewer for the flow `CLAUDE.md` runs on it
 `.claude/rules/templates/reviewer-subagent.md`. `tools/sync.ps1` copies
 only `.claude/rules/`, so this file never reaches a consuming repo.
 
-Pinned to Fable 5.1 at `xhigh` effort: the defects this repo reviews for —
-prose two agents would follow differently, contradictions across modules —
-surface only by reading the diff against every module it must agree with,
-and a pinned model keeps each round judged by the same reviewer. The full
-model ID is used rather than the `fable` alias, which resolves to a
-different version in some sessions. WebFetch
-and WebSearch are granted so library claims can be checked against the
+Runs on the `fable` alias at `xhigh` effort: the defects this repo reviews
+for — prose two agents would follow differently, contradictions across
+modules — surface only by reading the diff against every module it must
+agree with, and the alias moves the reviewer to each new Fable model with
+no edit here. The alias resolves to whichever Fable model the installed
+Claude Code release maps it to. Cases where that is not the newest model
+include: a session that itself runs a Fable model starts the reviewer on
+that session's version; `ANTHROPIC_DEFAULT_FABLE_MODEL` or a Claude apps
+gateway can point the alias elsewhere; and when an `availableModels`
+allowlist or an organization restriction blocks the alias's model, Claude
+Code substitutes another. A release landing between a branch's review
+rounds changes the reviewer mid-branch; a full model ID here pins it.
+WebFetch and WebSearch are granted so library claims can be checked against the
 release the commit message names. `tools:` omits Edit and Write; Bash
 stays for read-only `git`, so the never-writes boundary rests on the rules
 below, not on tooling.
