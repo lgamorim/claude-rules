@@ -34,11 +34,18 @@ built as one slice — its handler, request, response, and data access in one
 folder of the area's single project. It composes with the same modules, and
 for one area it and `architecture-clean.md` are alternatives.
 
-Add `overlays/architecture-areas.md` when an architecture overlay applies to
-part of the repo and not all of it; a repo that imports both of the overlays
-above always does, and `tools/sync.ps1` refuses to copy or audit a set that
-holds both without it. It has the root `CLAUDE.md` say which area follows
-which overlay, in a table like this one:
+Add `overlays/design-event-driven.md` when parts of the application react to
+each other's state changes through events: every event is published through
+an outbox and delivered after commit to idempotent consumers. It composes
+with `archetype/application.md` and with the architecture and persistence
+overlays.
+
+Add `overlays/architecture-areas.md` when an architecture or design overlay
+applies to part of the repo and not all of it; a repo that imports both
+`architecture-clean.md` and `architecture-vertical-slice.md` always does,
+and `tools/sync.ps1` refuses to copy or audit a set that holds both without
+it. It has the root `CLAUDE.md` say which area follows which overlay, in a
+table like this one:
 
     ## Architecture areas
 

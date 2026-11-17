@@ -20,7 +20,8 @@ the modules for a project archetype, so adopting the rules is a one-line import.
   core/         every profile imports all five, or four when its archetype replaces architecture.md
   archetype/    pick exactly one: library, application, unity-package, unity-game
   overlays/     orthogonal toggles: workflow posture, agent review, EF Core,
-                Dapper, benchmarks, frontends, Unity engine, architecture
+                Dapper, benchmarks, frontends, Unity engine, architecture,
+                design
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
 examples/       buildable samples demonstrating a profile
@@ -49,10 +50,14 @@ one rendering UI with Blazor. Add
 to an application that separates its Domain, Application, and
 Infrastructure layers into projects, or
 [`overlays/architecture-vertical-slice.md`][vertical-slice] to one built as
-one slice per use case. Add [`overlays/architecture-areas.md`][areas] when
-an architecture overlay applies to only part of a repo.
+one slice per use case. Add
+[`overlays/design-event-driven.md`][event-driven] to one whose parts react
+to each other through events, and
+[`overlays/architecture-areas.md`][areas] when an architecture or design
+overlay applies to only part of a repo.
 
 [vertical-slice]: .claude/rules/overlays/architecture-vertical-slice.md
+[event-driven]: .claude/rules/overlays/design-event-driven.md
 [areas]: .claude/rules/overlays/architecture-areas.md
 
 The workflow posture in each profile is a **default, not a fixed pairing** —
@@ -83,7 +88,8 @@ one orthogonal line. See
 | [`overlays/frontend-blazor.md`](.claude/rules/overlays/frontend-blazor.md) | Blazor Web App across all render modes: static SSR by default, per-mode DI-lifetime and state rules, prerender double-execution, JS interop timing, disposal, bUnit-first testing. |
 | [`overlays/architecture-clean.md`](.claude/rules/overlays/architecture-clean.md) | Clean, Onion, or Hexagonal layering, and what a layered application becomes under core's dependency rule: `Domain`/`Application`/`Infrastructure` projects per area with references pointing inward, I/O behind interfaces the Application layer declares, an all-`internal` Infrastructure behind one registration method, hosts that make one call into the Application layer per request. |
 | [`overlays/architecture-vertical-slice.md`][vertical-slice] | Vertical Slice architecture: one class-library project per area, one folder per use case holding its handler, request, response, and endpoint, handlers that do their own data access with no interface between, area types `internal` unless a host uses them, one registration method and one endpoint-mapping method for the host to call, database-reaching handlers tested against the real engine. |
-| [`overlays/architecture-areas.md`][areas] | Different architecture overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
+| [`overlays/design-event-driven.md`][event-driven] | Events between parts of an application: `<Fact>IntegrationEvent` records with a stable wire name, published only through an outbox in the publisher's transaction, delivered at least once after commit by a background dispatcher, consumers idempotent through an inbox, additive-only event contracts. |
+| [`overlays/architecture-areas.md`][areas] | Different architecture and design overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
 
 ## Using the rules in your repo
 

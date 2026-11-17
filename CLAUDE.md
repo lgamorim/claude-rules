@@ -32,7 +32,8 @@ different scope need different subsets — even within the same tech stack:
   exclusive opt-ins matched to the workflow posture), `persistence-efcore.md`,
   `persistence-dapper.md`, `benchmarks.md`, `frontend-mvc.md`,
   `frontend-blazor.md`, `unity-engine.md`, `architecture-clean.md`,
-  `architecture-vertical-slice.md`, `architecture-areas.md`.
+  `architecture-vertical-slice.md`, `architecture-areas.md`,
+  `design-event-driven.md`.
 - **`profiles/`** — thin manifests that `@import` a tailored subset. A consuming
   repo imports **one profile** and gets everything it needs.
 - **`templates/`** — skeletons a consuming repo copies and fills in:

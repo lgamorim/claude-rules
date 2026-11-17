@@ -2,8 +2,8 @@
 
 Add when an area-scoped overlay the repo imports applies to part of the
 repo and not all of it. An overlay is **area-scoped** when its file name
-starts with `architecture-`, this file excepted. Compose with
-`archetype/application.md`.
+starts with `architecture-` or `design-`, this file excepted. Compose
+with `archetype/application.md`.
 
 - The root `CLAUDE.md` has a section headed `## Architecture areas`
   holding one table with the columns `Area`, `Paths`, and `Overlays`. Each
