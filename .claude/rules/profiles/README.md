@@ -40,6 +40,12 @@ an outbox and delivered after commit to idempotent consumers. It composes
 with `archetype/application.md` and with the architecture and persistence
 overlays.
 
+Add `overlays/design-domain-model.md` when the application's business rules
+live in a domain model: `sealed record` value objects, entity classes, and
+aggregates enforce their own invariants and refuse an operation by throwing
+a domain exception. It composes with `archetype/application.md` and with
+the architecture, persistence, and event-driven overlays.
+
 Add `overlays/architecture-areas.md` when an architecture or design overlay
 applies to part of the repo and not all of it; a repo that imports both
 `architecture-clean.md` and `architecture-vertical-slice.md` always does,

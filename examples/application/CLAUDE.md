@@ -64,14 +64,14 @@ the `application-solo` profile plus the EF Core persistence overlay.
   migrations from core's coding standards: `.editorconfig` marks the folder
   `generated_code = true`, so the style analyzers and `dotnet format` skip
   it, and a migration is edited only to change what it does.
-- `Order` is the only aggregate root currently modeled. Endpoints in
+- `Order` is the only entity currently modeled. Endpoints in
   `src/Contoso.Orders.Api/Endpoints/OrdersEndpoints.cs` talk to
   `OrdersDbContext` directly —
   don't introduce a repository/service layer for it. A single-implementation
   interface here would be a speculative abstraction with no current benefit,
   which `core/design-principles.md`'s YAGNI rule explicitly disallows.
 - `Order` is a plain mutable class, not a record: it's an EF Core-tracked
-  aggregate that needs mutable, parameterless-constructible state, which the
+  entity that needs mutable, parameterless-constructible state, which the
   ORM exception in `overlays/persistence-efcore.md` allows. That exception is
   the *only* sanctioned departure from core's "prefer records" guidance.
 - Endpoint conventions of this project, which no imported module states:
