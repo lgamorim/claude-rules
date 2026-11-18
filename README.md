@@ -53,6 +53,8 @@ Infrastructure layers into projects, or
 one slice per use case. Add
 [`overlays/design-domain-model.md`][domain-model] to one whose business
 rules live in entities, value objects, and aggregates,
+[`overlays/design-cqrs.md`][cqrs] to one that separates the use cases
+that change state from those that read it,
 [`overlays/design-event-driven.md`][event-driven] to one whose parts react
 to each other through events, and
 [`overlays/architecture-areas.md`][areas] when an architecture or design
@@ -61,6 +63,7 @@ overlay applies to only part of a repo.
 [vertical-slice]: .claude/rules/overlays/architecture-vertical-slice.md
 [event-driven]: .claude/rules/overlays/design-event-driven.md
 [domain-model]: .claude/rules/overlays/design-domain-model.md
+[cqrs]: .claude/rules/overlays/design-cqrs.md
 [areas]: .claude/rules/overlays/architecture-areas.md
 
 The workflow posture in each profile is a **default, not a fixed pairing** —
@@ -93,6 +96,7 @@ one orthogonal line. See
 | [`overlays/architecture-vertical-slice.md`][vertical-slice] | Vertical Slice architecture: one class-library project per area, one folder per use case holding its handler, request, response, and endpoint, handlers that do their own data access with no interface between, area types `internal` unless a host uses them, one registration method and one endpoint-mapping method for the host to call, database-reaching handlers tested against the real engine. |
 | [`overlays/design-event-driven.md`][event-driven] | Events between parts of an application: `<Fact>IntegrationEvent` records with a stable wire name, published only through an outbox in the publisher's transaction, delivered at least once after commit by a background dispatcher, consumers idempotent through an inbox, additive-only event contracts. |
 | [`overlays/design-domain-model.md`][domain-model] | A domain model in the tactical patterns of Domain-Driven Design: `sealed record` value objects that enforce their invariants in one constructor, entity classes changed only through their methods, aggregates loaded and saved whole through their root, one `sealed` exception type per invariant, translated only by the code that produces the response, `<Fact>DomainEvent` records a root hands to the outbox publisher, and how EF Core maps these types. |
+| [`overlays/design-cqrs.md`][cqrs] | Command Query Responsibility Segregation in code, over one database: every use case a command or a query, commands that return at most the id of what they created, queries that return one `<UseCase>Response` record and change nothing, one `sealed` handler per use case called directly with no mediator, and, where both persistence overlays are carried, EF Core for every command and Dapper for every query. |
 | [`overlays/architecture-areas.md`][areas] | Different architecture and design overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
 
 ## Using the rules in your repo

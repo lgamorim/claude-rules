@@ -46,6 +46,12 @@ aggregates enforce their own invariants and refuse an operation by throwing
 a domain exception. It composes with `archetype/application.md` and with
 the architecture, persistence, and event-driven overlays.
 
+Add `overlays/design-cqrs.md` when the application separates the use cases
+that change state from those that read it: every use case is a command or a
+query with a handler of its own, called directly. It composes with
+`archetype/application.md` and with the architecture, persistence, and other
+design overlays.
+
 Add `overlays/architecture-areas.md` when an architecture or design overlay
 applies to part of the repo and not all of it; a repo that imports both
 `architecture-clean.md` and `architecture-vertical-slice.md` always does,
