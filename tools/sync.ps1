@@ -207,6 +207,17 @@ if ($styles.Count -eq 2 -and $areas.Count -eq 0) {
     throw "Overlays 'architecture-clean' and 'architecture-vertical-slice' are alternatives for one area; a set holding both requires 'architecture-areas': add it with -Add."
 }
 
+# An area that follows `design-event-sourcing` follows `design-domain-model`
+# and `design-cqrs` as well, so a set holding it must hold both.
+$eventSourcing = @($modules | Where-Object { $_ -like '*overlays\design-event-sourcing.md' })
+$lacking = @('design-domain-model', 'design-cqrs' | Where-Object {
+    $name = $_
+    @($modules | Where-Object { $_ -like "*overlays\$name.md" }).Count -eq 0
+})
+if ($eventSourcing.Count -gt 0 -and $lacking.Count -gt 0) {
+    throw "An area that follows 'design-event-sourcing' follows 'design-domain-model' and 'design-cqrs' too; the set lacks $(($lacking | ForEach-Object { "'$_'" }) -join ' and '): use -Add $($lacking -join ',')."
+}
+
 # The posture the set ends up with, whether the profile or -Workflow chose it.
 $setPosture = if ($posture.Count -gt 0) {
     [System.IO.Path]::GetFileNameWithoutExtension($posture[0]) -replace '^workflow-', ''

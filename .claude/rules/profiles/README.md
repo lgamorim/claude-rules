@@ -56,7 +56,8 @@ Add `overlays/design-event-sourcing.md` when an aggregate's stored state is
 the sequence of domain events its root has recorded: a root is rebuilt by
 replaying its stream, and queries read projections written in the
 transaction that appends the domain events. An area that follows it also
-follows `design-domain-model.md` and `design-cqrs.md`. It composes with
+follows `design-domain-model.md` and `design-cqrs.md`, and `tools/sync.ps1`
+refuses to copy or audit a set that holds it without both. It composes with
 `archetype/application.md` and with the architecture, persistence, and
 event-driven overlays.
 
