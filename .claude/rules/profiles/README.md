@@ -52,6 +52,14 @@ query with a handler of its own, called directly. It composes with
 `archetype/application.md` and with the architecture, persistence, and other
 design overlays.
 
+Add `overlays/design-event-sourcing.md` when an aggregate's stored state is
+the sequence of domain events its root has recorded: a root is rebuilt by
+replaying its stream, and queries read projections written in the
+transaction that appends the domain events. An area that follows it also
+follows `design-domain-model.md` and `design-cqrs.md`. It composes with
+`archetype/application.md` and with the architecture, persistence, and
+event-driven overlays.
+
 Add `overlays/architecture-areas.md` when an architecture or design overlay
 applies to part of the repo and not all of it; a repo that imports both
 `architecture-clean.md` and `architecture-vertical-slice.md` always does,

@@ -111,13 +111,16 @@ Domain exceptions
   into a return value — a result, a flag, or `null`.
 
 Domain events
-- In an area that also follows `design-event-driven.md`, a root records
-  a **domain event** for each fact it causes that an integration event
-  states. The domain event type is added in the change that adds that
-  integration event. An area that does not follow that overlay has no
-  domain event type.
+- A root records a **domain event** in two kinds of area. In an area
+  that follows `design-event-sourcing.md` it records one for every
+  change to its state, as that overlay states. In any other area that
+  follows `design-event-driven.md` it records one for each fact it
+  causes that an integration event states, and the domain event type is
+  added in the change that adds that integration event. An area that
+  follows neither overlay has no domain event type.
 - A domain event type is a `sealed record` named `<Fact>DomainEvent`,
-  `<Fact>` being that of the integration event, e.g.
+  `<Fact>` naming what happened in the past tense — the `<Fact>` of the
+  integration event built from it, where there is one — e.g.
   `OrderPlacedDomainEvent`. It implements `IDomainEvent`, an interface
   with no members, and its members are base-library types and value
   objects — never an entity.
@@ -126,8 +129,11 @@ Domain events
   Roots share no base class for it.
 - The publisher of `design-event-driven.md` reads the root's
   `DomainEvents` before it commits and builds from each the integration
-  event it adds to the outbox. A domain event has no consumer, and
-  nothing else reads it.
+  event it adds to the outbox; in an area that follows
+  `design-event-sourcing.md`, a domain event whose fact no integration
+  event states yields none. A domain event has no consumer. Nothing
+  else reads it, except the code that `design-event-sourcing.md` has
+  store, replay, and project it.
 - This kind is always written "domain event"; an unqualified "event"
   stays the integration event of that overlay.
 
@@ -136,7 +142,9 @@ Placement
   `IDomainEvent` live in `<Area>.Domain`. The use case reads the root's
   `DomainEvents` and builds the integration events, which it passes to
   the method that commits, as `design-event-driven.md` requires; the
-  Infrastructure layer never reads a domain event.
+  Infrastructure layer never reads a domain event, except to store,
+  replay, and project it in an area that follows
+  `design-event-sourcing.md`.
 - In an area that follows `architecture-vertical-slice.md`, they live in
   `Domain/` — domain services, domain exceptions, and domain events
   included, a stated exception to that overlay's folder rule, which
