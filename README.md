@@ -50,7 +50,9 @@ one rendering UI with Blazor. Add
 to an application that separates its Domain, Application, and
 Infrastructure layers into projects, or
 [`overlays/architecture-vertical-slice.md`][vertical-slice] to one built as
-one slice per use case. Add
+one slice per use case, and
+[`overlays/architecture-modular-monolith.md`][modular-monolith] to one
+made of business modules that each own their tables. Add
 [`overlays/design-domain-model.md`][domain-model] to one whose business
 rules live in entities, value objects, and aggregates,
 [`overlays/design-cqrs.md`][cqrs] to one that separates the use cases
@@ -63,6 +65,7 @@ to each other through events, and
 overlay applies to only part of a repo.
 
 [vertical-slice]: .claude/rules/overlays/architecture-vertical-slice.md
+[modular-monolith]: .claude/rules/overlays/architecture-modular-monolith.md
 [event-driven]: .claude/rules/overlays/design-event-driven.md
 [domain-model]: .claude/rules/overlays/design-domain-model.md
 [cqrs]: .claude/rules/overlays/design-cqrs.md
@@ -101,6 +104,7 @@ one orthogonal line. See
 | [`overlays/design-domain-model.md`][domain-model] | A domain model in the tactical patterns of Domain-Driven Design: `sealed record` value objects that enforce their invariants in one constructor, entity classes changed only through their methods, aggregates loaded and saved whole through their root, one `sealed` exception type per invariant, translated only by the code that produces the response, `<Fact>DomainEvent` records a root hands to the outbox publisher, and how EF Core maps these types. |
 | [`overlays/design-cqrs.md`][cqrs] | Command Query Responsibility Segregation in code, over one database: every use case a command or a query, commands that return at most the id of what they created, queries that return one `<UseCase>Response` record and change nothing, one `sealed` handler per use case called directly with no mediator, and, where both persistence overlays are carried, EF Core for every command and Dapper for every query. |
 | [`overlays/design-event-sourcing.md`][event-sourcing] | Event sourcing in one database, for every aggregate of an area that also follows the domain-model and CQRS overlays: a root that changes state only in `Apply` and is rebuilt by `Replay`, `<Fact>DomainEvent` records as a permanent contract with a stored `EventName`, an append-only event store whose per-stream version is the concurrency check, projections written by one `IProjector` each in the transaction that appends, and how EF Core stores them. |
+| [`overlays/architecture-modular-monolith.md`][modular-monolith] | A modular monolith: business modules that each follow the Clean or the Vertical Slice overlay, own their tables and schema, and reach each other only through an `<Area>.Contracts` project whose contract interfaces only read and through events; one adapter type for each other business module called, a `DbContext` and migrations history per business module, and a first dependency between two business modules asked of the maintainer. |
 | [`overlays/architecture-areas.md`][areas] | Different architecture and design overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
 
 ## Using the rules in your repo
