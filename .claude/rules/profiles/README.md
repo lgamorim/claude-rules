@@ -66,9 +66,10 @@ one deployable made of business modules that each own their tables: a
 business module reaches another only through its contracts project,
 whose contract interfaces only read, and changes another's state only
 through an event. An area that follows it also follows
-`architecture-clean.md` or `architecture-vertical-slice.md`. It composes
-with `archetype/application.md` and with the persistence and design
-overlays.
+`architecture-clean.md` or `architecture-vertical-slice.md`, and
+`tools/sync.ps1` refuses to copy or audit a set that holds it without
+either. It composes with `archetype/application.md` and with the
+persistence and design overlays.
 
 Add `overlays/architecture-areas.md` when an architecture or design overlay
 applies to part of the repo and not all of it; a repo that imports both

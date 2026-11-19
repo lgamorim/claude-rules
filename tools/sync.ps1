@@ -207,6 +207,14 @@ if ($styles.Count -eq 2 -and $areas.Count -eq 0) {
     throw "Overlays 'architecture-clean' and 'architecture-vertical-slice' are alternatives for one area; a set holding both requires 'architecture-areas': add it with -Add."
 }
 
+# An area that follows `architecture-modular-monolith` follows one of the two
+# styles as well, which says what its projects are, so a set holding it must
+# hold at least one of them.
+$modularMonolith = @($modules | Where-Object { $_ -like '*overlays\architecture-modular-monolith.md' })
+if ($modularMonolith.Count -gt 0 -and $styles.Count -eq 0) {
+    throw "An area that follows 'architecture-modular-monolith' follows 'architecture-clean' or 'architecture-vertical-slice' too; the set holds neither: use -Add architecture-clean or -Add architecture-vertical-slice."
+}
+
 # An area that follows `design-event-sourcing` follows `design-domain-model`
 # and `design-cqrs` as well, so a set holding it must hold both.
 $eventSourcing = @($modules | Where-Object { $_ -like '*overlays\design-event-sourcing.md' })
