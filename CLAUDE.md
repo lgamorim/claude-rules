@@ -10,8 +10,8 @@ Claude Code project rules for .NET/C# development. The rules live under
 C# code, either directly in this repo or by being referenced/copied into other
 .NET repositories.
 
-A reference project showing these rules applied to real code lives under
-`examples/application/` (see "Example" below). This repository itself ships only
+Reference projects showing these rules applied to real code live under
+`examples/` (see "Examples" below). This repository itself ships only
 rule files and two scripts — there is no build or test command for the
 repository's own content; `tools/check.ps1` is its one lint command.
 
@@ -50,7 +50,9 @@ branch adds meet the hygiene rule, and the profile tables in `README.md` and
 non-zero. `.github/workflows/check.yml` runs it on every push;
 `.github/workflows/example-application.yml` runs the application example's
 build, tests, and `dotnet format --verify-no-changes` on a push that
-changes a file under `examples/application/` or that workflow file.
+changes a file under `examples/application/` or that workflow file, and
+`.github/workflows/example-library.yml` does the same for
+`examples/library/` on Linux, Windows, and macOS, adding `dotnet pack`.
 
 ## Rules for working on this repository
 
@@ -124,7 +126,7 @@ changes a file under `examples/application/` or that workflow file.
 - When changing a rule that consuming repos already copied, expect drift: run
   `tools/sync.ps1 -Check` against those repos rather than assuming they match.
 
-## Example
+## Examples
 
 `examples/application/` contains a small ASP.NET Core minimal API + EF Core
 (Npgsql) sample ("Contoso.Orders") demonstrating the `application-solo` profile
@@ -137,6 +139,16 @@ Build and test it with `dotnet build` / `dotnet test` from that directory,
 which need SDK 11 (which carries the .NET and ASP.NET Core 11 runtimes) and
 the .NET and ASP.NET Core 10 runtimes; `dotnet test` also needs a running
 Docker engine, since the integration tests start Postgres with
-Testcontainers. There is no `src/` or `test/` at the repo
+Testcontainers.
+
+`examples/library/` contains a small RFC 4180 CSV reader ("Contoso.Csv")
+demonstrating the `library-team` profile: a documented public API, the
+`net10.0;net11.0` target matrix, `dotnet pack`, and a BenchmarkDotNet
+project with a locally recorded baseline. Its `CLAUDE.md` imports
+`@../../.claude/rules/profiles/library-team.md`, and its `README.md` is the
+guided tour. `dotnet build` / `dotnet test` from that directory need SDK 11
+and the .NET 10 and 11 runtimes, and no Docker.
+
+There is no `src/` or `test/` at the repo
 root — this repository ships rules only; example/reference code lives under
 `examples/`.

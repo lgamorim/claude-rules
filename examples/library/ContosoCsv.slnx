@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/bench/">
+    <Project Path="bench/Contoso.Csv.Benchmarks/Contoso.Csv.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Contoso.Csv/Contoso.Csv.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Contoso.Csv.UnitTests/Contoso.Csv.UnitTests.csproj" />
+  </Folder>
+</Solution>

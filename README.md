@@ -23,7 +23,7 @@ the modules for a project archetype, so adopting the rules is a one-line import.
                 architecture, design, Unity engine, benchmarks
   profiles/     thin manifests composing the above (start here)
   templates/    skeletons consuming repos copy: path-scoped rules, reviewer subagent
-examples/       buildable samples demonstrating a profile
+examples/       buildable samples, each demonstrating a profile
 tools/sync.ps1  copy a profile into a repo, or audit it for drift
 tools/check.ps1 check this repo's own maintenance rules
 ```
@@ -258,7 +258,7 @@ own repo from
 which uses YAML `paths:` frontmatter so the rule activates only when a matching
 file is touched.
 
-## Example
+## Examples
 
 [`examples/application/`](examples/application/) is a tiny ASP.NET Core minimal
 API + EF Core (Npgsql) service, `Contoso.Orders`, demonstrating the
@@ -275,6 +275,20 @@ dotnet test
 It needs SDK 11 (which carries the .NET and ASP.NET Core 11 runtimes) and the
 .NET and ASP.NET Core 10 runtimes, and `dotnet test` needs a running Docker
 engine: the example's integration tests start Postgres with Testcontainers.
+
+[`examples/library/`](examples/library/) is a small RFC 4180 CSV reader,
+`Contoso.Csv`, demonstrating the `library-team` profile: a documented public
+API, the full target-framework matrix, `dotnet pack`, and benchmarks. Its
+[`README.md`](examples/library/README.md) is the guided tour.
+
+```sh
+cd examples/library
+dotnet build
+dotnet test
+```
+
+It needs SDK 11 and the .NET 10 and 11 runtimes, one per target framework,
+but no Docker.
 
 There is no `src/` or `test/` at the repository root — this repo ships rules
 only; example code lives under `examples/`.
