@@ -9,7 +9,7 @@ Structure (deltas from `core/architecture.md`)
 
 Packaging & compatibility
 - `dotnet pack` runs in CI from day one so packaging bugs surface early.
-- Target the full supported TFM matrix (e.g. `net8.0;net10.0`); CI runs the
+- Target the full supported TFM matrix (e.g. `net10.0;net11.0`); CI runs the
   matrix on every OS you claim to support.
 - The public API is a contract: follow semantic versioning, keep XML docs
   complete (they ship in the package), and treat any breaking change as a
