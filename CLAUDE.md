@@ -48,9 +48,9 @@ profile and example imports resolve, no module is dead weight, the lines a
 branch adds meet the hygiene rule, and the profile tables in `README.md` and
 `profiles/README.md` agree. It prints `file:line` for each failure and exits
 non-zero. `.github/workflows/check.yml` runs it on every push;
-`.github/workflows/example.yml` runs the example's build, tests, and
-`dotnet format --verify-no-changes` on a push that changes a file under
-`examples/application/` or that workflow file.
+`.github/workflows/example-application.yml` runs the application example's
+build, tests, and `dotnet format --verify-no-changes` on a push that
+changes a file under `examples/application/` or that workflow file.
 
 ## Rules for working on this repository
 
@@ -133,8 +133,10 @@ via `@../../.claude/rules/profiles/application-solo.md` and adds
 project-specific notes; see `examples/application/README.md` for a guided tour of
 which file demonstrates which rule.
 
-Build and test it with `dotnet build` / `dotnet test` from that directory;
-`dotnet test` needs a running Docker engine, since the integration tests start
-Postgres with Testcontainers. There is no `src/` or `test/` at the repo
+Build and test it with `dotnet build` / `dotnet test` from that directory,
+which need SDK 11 (which carries the .NET and ASP.NET Core 11 runtimes) and
+the .NET and ASP.NET Core 10 runtimes; `dotnet test` also needs a running
+Docker engine, since the integration tests start Postgres with
+Testcontainers. There is no `src/` or `test/` at the repo
 root — this repository ships rules only; example/reference code lives under
 `examples/`.

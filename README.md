@@ -272,8 +272,9 @@ dotnet build
 dotnet test
 ```
 
-`dotnet test` needs a running Docker engine: the example's integration tests
-start Postgres with Testcontainers.
+It needs SDK 11 (which carries the .NET and ASP.NET Core 11 runtimes) and the
+.NET and ASP.NET Core 10 runtimes, and `dotnet test` needs a running Docker
+engine: the example's integration tests start Postgres with Testcontainers.
 
 There is no `src/` or `test/` at the repository root — this repo ships rules
 only; example code lives under `examples/`.

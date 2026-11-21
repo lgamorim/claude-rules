@@ -5,15 +5,16 @@ from this repo in a real, if tiny, codebase. It is the reference deployment of
 the `application-solo` profile plus the EF Core persistence overlay.
 
 ## Build & test
-- `dotnet build`
-- `dotnet test` (needs a running Docker engine: the integration tests start
-  Postgres with Testcontainers)
+- `dotnet build` and `dotnet test` need SDK 11 (which carries the .NET and
+  ASP.NET Core 11 runtimes) and the .NET and ASP.NET Core 10 runtimes;
+  `dotnet test` also needs a running Docker engine: the integration tests
+  start Postgres with Testcontainers
 - `dotnet user-secrets set ConnectionStrings:Orders "<connection string>"
   --project src/Contoso.Orders.Api` once, then
-  `dotnet run --project src/Contoso.Orders.Api`
+  `dotnet run --project src/Contoso.Orders.Api --framework net10.0`
 - `dotnet tool restore`, then
-  `dotnet ef migrations add <Name> --project src/Contoso.Orders.Api` after
-  a model change
+  `dotnet ef migrations add <Name> --project src/Contoso.Orders.Api
+  --framework net10.0` after a model change
 
 ## Shared conventions
 @../../.claude/rules/profiles/application-solo.md
@@ -27,13 +28,22 @@ the `application-solo` profile plus the EF Core persistence overlay.
   `archetype/application.md`), and a single `ContosoOrders.slnx` at this
   project's root referencing all three. Each project is named for its root
   namespace (`Contoso.Orders.Api`), so the assembly name matches the namespace.
-- `Directory.Build.props` at this project's root centralizes `TargetFramework`,
+- `Directory.Build.props` at this project's root centralizes `TargetFrameworks`,
   `Nullable`, `ImplicitUsings`, `TreatWarningsAsErrors`, and `IsPackable` so
   every project inherits them instead of repeating them —
   `Contoso.Orders.Api.csproj` only adds what's specific to it
   (`InvariantGlobalization`, `GenerateDocumentationFile`). `IsPackable` stays
   false per `archetype/application.md`: the deliverable is the running app,
   not a package.
+- `TargetFrameworks` is `net10.0;net11.0`, the .NET releases in support.
+  `archetype/application.md` asks for no matrix, so this is a convention of
+  this project, which runs every test on each release. Every package keeps
+  one version across both targets, and moves to 11.x only on the
+  maintainer's instruction: as of 2026-11-20 the Npgsql EF Core provider
+  has no stable 11.x release, so EF Core stays on 10.x, whose packages run
+  on `net11.0` too. With two targets, `dotnet run` and
+  `dotnet ef` need `--framework`; `net10.0` is the one this file names, and
+  either target yields the same migrations.
 - `.editorconfig` at this project's root encodes `core/coding-standards.md`'s
   naming and style rules (`_camelCase` private fields, `I`-prefixed interfaces,
   file-scoped namespaces, unused-using removal) so `dotnet format` and the
@@ -45,7 +55,7 @@ the `application-solo` profile plus the EF Core persistence overlay.
 - Entry point: `src/Contoso.Orders.Api/Program.cs`.
 - The `Orders` connection string carries the database password, so it never
   goes in `appsettings*.json` (`archetype/application.md`). Locally it comes
-  from user-secrets, which .NET 10's `WebApplication.CreateBuilder` loads
+  from user-secrets, which `WebApplication.CreateBuilder` loads
   only in the Development environment that
   `src/Contoso.Orders.Api/Properties/launchSettings.json` sets for
   `dotnet run`; a deployed host sets the `ConnectionStrings__Orders`
@@ -100,8 +110,9 @@ the `application-solo` profile plus the EF Core persistence overlay.
   mapping smoke tests. `OrdersApiFactory` hosts the app through
   `WebApplicationFactory<Program>` against a Testcontainers Postgres and
   applies the migrations before the first test, so the migrations run against
-  the real engine too. .NET 10 generates `Program` as a public class, so the
-  factory needs no `public partial class Program` declaration.
+  the real engine too. .NET 10 and .NET 11 generate `Program` as a public
+  class, so the factory needs no `public partial class Program`
+  declaration.
 - This sample ships one test per test project, a mapping round-trip and a
   NotFound endpoint check, rather than the full edge-case set
   `core/testing-philosophy.md` normally requires — an explicitly scoped

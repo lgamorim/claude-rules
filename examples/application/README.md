@@ -46,7 +46,7 @@ reference deployment of the **`application-solo`** profile plus the
   it is not in the file; `CLAUDE.md` shows supplying it through user-secrets
   locally and an environment variable when deployed.
 - **`Directory.Build.props`** — follows `core/architecture.md`'s convention of
-  centralizing shared MSBuild settings (`TargetFramework`, `Nullable`,
+  centralizing shared MSBuild settings (`TargetFrameworks`, `Nullable`,
   `TreatWarningsAsErrors`, `EnforceCodeStyleInBuild`, etc.) in one place, so
   `core/coding-standards.md`'s zero-warning/nullable rules are enforced there
   instead of copy-pasted into every `.csproj`.
@@ -55,6 +55,11 @@ reference deployment of the **`application-solo`** profile plus the
   leaving them as prose. Paired with `EnforceCodeStyleInBuild`, an
   out-of-convention name or an unused `using` fails tooling instead of passing
   silently.
+- **`../../.github/workflows/example-application.yml`** — follows
+  `core/coding-standards.md` and `core/testing-philosophy.md`: CI builds the
+  app with zero warnings, runs both test projects on both target frameworks
+  (the integration tests against Postgres in Docker on the runner), and
+  fails on any change `dotnet format` would make.
 
 ## Why this matters more than the rules themselves
 
