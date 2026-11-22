@@ -117,7 +117,10 @@ Reaching another business module
 - A business module changes the state of another in one way: it
   publishes an event that the other consumes. A business module that
   publishes an event another consumes, and the one that consumes it,
-  both follow `design-event-driven.md`.
+  both follow `design-event-driven.md`. A change that needs that
+  import, or that entry in a business module's row, where it is
+  missing first asks the maintainer for it and adds neither without
+  that answer.
 - A business module is one bounded context. Outside the contracts
   projects no type is shared: where two business modules need one
   concept, each declares its own type for it.
