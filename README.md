@@ -124,13 +124,16 @@ Application, and Infrastructure layers into projects, or
 two are alternatives for one area. Add `architecture-modular-monolith.md` on
 top of either when the application is made of business modules that each own
 their tables, and `architecture-areas.md` when an architecture or design
-overlay applies to only part of a repo.
+overlay applies to only part of a repo. Add `architecture-microservices.md`
+when the application is one deployable among several, each in a repository
+of its own; it binds the whole repo.
 
 | Module | What it covers |
 |--------|----------------|
 | [`architecture-clean.md`][clean] | Clean, Onion, or Hexagonal layering, and what a layered application becomes under core's dependency rule: `Domain`/`Application`/`Infrastructure` projects per area with references pointing inward, I/O behind interfaces the Application layer declares, an all-`internal` Infrastructure behind one registration method, hosts that make one call into the Application layer per request. |
 | [`architecture-vertical-slice.md`][vertical-slice] | Vertical Slice architecture: one class-library project per area, one folder per use case holding its handler, request, response, and endpoint, handlers that do their own data access with no interface between, area types `internal` unless a host uses them, one registration method and one endpoint-mapping method for the host to call, database-reaching handlers tested against the real engine. |
 | [`architecture-modular-monolith.md`][modular-monolith] | A modular monolith: business modules that each follow the Clean or the Vertical Slice overlay, own their tables and schema, and reach each other only through an `<Area>.Contracts` project whose contract interfaces only read and through events; one adapter type for each other business module called, a `DbContext` and migrations history per business module, and a first dependency between two business modules asked of the maintainer. |
+| [`architecture-microservices.md`][microservices] | One deployable among several, each in a repository of its own: no code or data store shared with another, one `<Remote>Client` for each remote system that declares its own wire records and returns only the application's types, a remote system's state changed only through an event, published through the outbox or received, with its `EventId` as idempotency key, served routes that change additively only, and no transaction beyond the application's database. Binds the whole repo, so no area row names it. |
 | [`architecture-areas.md`][areas] | Different architecture and design overlays on different parts of one repo: an `Area`/`Paths`/`Overlays` table in the root `CLAUDE.md` that says which area follows which overlay, edited only on the maintainer's instruction. |
 
 #### Design
@@ -187,6 +190,7 @@ other project that tracks performance.
 [clean]: .claude/rules/overlays/architecture-clean.md
 [vertical-slice]: .claude/rules/overlays/architecture-vertical-slice.md
 [modular-monolith]: .claude/rules/overlays/architecture-modular-monolith.md
+[microservices]: .claude/rules/overlays/architecture-microservices.md
 [areas]: .claude/rules/overlays/architecture-areas.md
 [domain-model]: .claude/rules/overlays/design-domain-model.md
 [cqrs]: .claude/rules/overlays/design-cqrs.md

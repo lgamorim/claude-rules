@@ -71,6 +71,19 @@ through an event. An area that follows it also follows
 either. It composes with `archetype/application.md` and with the
 persistence and design overlays.
 
+Add `overlays/architecture-microservices.md` when the application is one
+deployable among several, each built and released from a repository of
+its own: it shares no code or data store with another, reaches a remote
+system through one client type that declares its own wire records,
+changes a remote system's state only through an event — one it
+publishes through its outbox or one it received — and changes the
+routes it serves additively only. It binds the
+whole repo, so no row of the area table names it, and a repo whose
+application publishes or consumes an event imports
+`design-event-driven.md` too. It composes with `archetype/application.md`
+and with the other architecture overlays and the persistence, frontend,
+and design overlays.
+
 Add `overlays/architecture-areas.md` when an architecture or design overlay
 applies to part of the repo and not all of it; a repo that imports both
 `architecture-clean.md` and `architecture-vertical-slice.md` always does,
